@@ -157,17 +157,15 @@ export const RBACMatrixView: React.FC = () => {
       <div className="surface-card border-surface-border">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <ShieldCheck className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card shadow-pine/20">
+              <ShieldCheck className="w-6 h-6 text-mint-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-pine">
-                  {t('الوحدة 9: مصفوفة الصلاحيات والحماية', 'Unit 9: RBAC Matrix & Security')}
+                  {t('الوحدة 1: قاعدة البيانات ومصفوفة الصلاحيات (RBAC)', 'Unit 1: DB Schema & RBAC Engine')}
                 </h1>
-                <Badge variant="mint" size="sm">
-                  {t('حماية وصلاحيات دقيقة', 'Granular Security')}
-                </Badge>
+                <Badge variant="mint" size="sm">Active Engine</Badge>
               </div>
               <p className="text-xs text-neutral-muted mt-1">
                 {t(
@@ -179,33 +177,33 @@ export const RBACMatrixView: React.FC = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-soft dark:bg-surface-muted border border-surface-border">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-sand-200/70 border border-sand-300">
             <button
               onClick={() => setActiveTab('matrix')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 activeTab === 'matrix'
-                  ? 'bg-mint-500 text-white shadow-card shadow-mint-500/20'
-                  : 'text-neutral-muted dark:text-neutral-subtle hover:text-pine dark:hover:text-white'
+                  ? 'bg-white text-pine shadow-sm'
+                  : 'text-neutral-muted hover:text-pine'
               }`}
             >
               {t('مصفوفة الصلاحيات التفاعلية', 'Permissions Matrix')}
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 activeTab === 'users'
-                  ? 'bg-mint-500 text-white shadow-card shadow-mint-500/20'
-                  : 'text-neutral-muted dark:text-neutral-subtle hover:text-pine dark:hover:text-white'
+                  ? 'bg-white text-pine shadow-sm'
+                  : 'text-neutral-muted hover:text-pine'
               }`}
             >
               {t('سجل المستخدمين والأدوار', 'Users Directory')}
             </button>
             <button
               onClick={() => setActiveTab('simulation')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 activeTab === 'simulation'
-                  ? 'bg-mint-500 text-white shadow-card shadow-mint-500/20'
-                  : 'text-neutral-muted dark:text-neutral-subtle hover:text-pine dark:hover:text-white'
+                  ? 'bg-white text-pine shadow-sm'
+                  : 'text-neutral-muted hover:text-pine'
               }`}
             >
               {t('مختبر المحاكاة الفوري', 'Role Simulator')}
@@ -217,24 +215,24 @@ export const RBACMatrixView: React.FC = () => {
       {/* TAB 1: PERMISSION MATRIX */}
       {activeTab === 'matrix' && (
         <div className="surface-card p-0 overflow-hidden border border-surface-border">
-          <div className="p-4 bg-sand-50/80 dark:bg-surface-muted border-b border-surface-border flex items-center justify-between">
+          <div className="p-4 bg-sand-50/80 border-b border-surface-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <KeyRound className="w-4 h-4 text-mint-600" />
-              <span className="text-sm font-bold text-pine dark:text-white">
-                {t('مصفوفة الصلاحيات التفصيلية', 'Detailed RBAC Permission Matrix')}
+              <span className="text-sm font-bold text-pine">
+                {t('مصفوفة الصلاحيات التفصيلية (Role-Based Access Control)', 'Detailed RBAC Permission Matrix')}
               </span>
             </div>
-            <div className="flex items-center gap-3 text-xs text-neutral-muted dark:text-neutral-subtle">
+            <div className="flex items-center gap-3 text-xs text-neutral-muted">
               <span className="flex items-center gap-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-mint-500" />
                 {t('صلاحية مفعّلة', 'Enabled')}
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-sand-400 dark:bg-surface-border" />
+                <span className="w-2.5 h-2.5 rounded-full bg-sand-300" />
                 {t('صلاحية محجوبة', 'Restricted')}
               </span>
               <span className="flex items-center gap-1">
-                <Lock className="w-3 h-3 text-amber-500" />
+                <Lock className="w-3 h-3 text-amber-600" />
                 {t('بيانات مالية حساسة', 'Confidential')}
               </span>
             </div>
@@ -243,7 +241,7 @@ export const RBACMatrixView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-start text-xs border-collapse">
               <thead>
-                <tr className="bg-sand-100/70 dark:bg-surface-soft border-b border-surface-border text-pine dark:text-white">
+                <tr className="bg-sand-100/70 border-b border-sand-300 text-pine">
                   <th className="p-3.5 text-start font-bold min-w-[280px]">
                     {t('المجال الوظيفي / الصلاحية البرمجية', 'Functional Domain / Permission')}
                   </th>
@@ -254,13 +252,13 @@ export const RBACMatrixView: React.FC = () => {
                       <th
                         key={r}
                         className={`p-3.5 text-center font-bold min-w-[130px] transition-colors ${
-                          isCurrent ? 'bg-mint-500/15 dark:bg-mint-950/50 border-x border-mint-500/40' : ''
+                          isCurrent ? 'bg-mint-100/60 border-x border-mint-200' : ''
                         }`}
                       >
                         <div className="flex flex-col items-center">
                           <span className="text-xs">{t(rDef.name, rDef.nameEn)}</span>
                           {isCurrent && (
-                            <span className="text-[10px] bg-mint-500 text-white px-2 py-0.5 rounded-full font-bold mt-1 shadow-xs">
+                            <span className="text-[10px] bg-mint-500 text-canvas px-1.5 py-0.2 rounded-full font-normal mt-0.5">
                               {t('دورك الحالي', 'Current Role')}
                             </span>
                           )}
@@ -274,11 +272,11 @@ export const RBACMatrixView: React.FC = () => {
                 {permissionGroups.map((group, gIdx) => (
                   <React.Fragment key={gIdx}>
                     {/* Group Header */}
-                    <tr className="bg-sand-50/90 dark:bg-surface-muted font-bold text-pine dark:text-white border-t border-b border-surface-border">
+                    <tr className="bg-sand-50/90 font-bold text-pine border-t border-b border-sand-300">
                       <td colSpan={roles.length + 1} className="p-3">
                         <div className="flex items-center gap-2">
                           <span>{t(group.groupName, group.groupNameEn)}</span>
-                          <span className="text-[11px] font-normal text-neutral-muted dark:text-neutral-subtle">
+                          <span className="text-[11px] font-normal text-neutral-muted">
                             ({t(group.description, group.descriptionEn)})
                           </span>
                         </div>
@@ -287,13 +285,13 @@ export const RBACMatrixView: React.FC = () => {
 
                     {/* Permissions in Group */}
                     {group.permissions.map((perm) => (
-                      <tr key={perm.key} className="hover:bg-sand-50/50 dark:hover:bg-surface-soft/40 transition-colors">
-                        <td className="p-3.5 ps-6 font-medium text-neutral-main dark:text-neutral-200">
+                      <tr key={perm.key} className="hover:bg-sand-50/50 transition-colors">
+                        <td className="p-3.5 ps-6 font-medium text-neutral-main">
                           <div className="flex items-center gap-2">
-                            {perm.isSensitive && <Lock className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+                            {perm.isSensitive && <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
                             <div>
-                              <span className="block font-semibold">{t(perm.label, perm.labelEn)}</span>
-                              <span className="block text-[10px] text-neutral-muted dark:text-neutral-subtle font-mono mt-0.5">
+                              <span>{t(perm.label, perm.labelEn)}</span>
+                              <span className="block text-[10px] text-neutral-subtle font-mono">
                                 {perm.key}
                               </span>
                             </div>
@@ -309,15 +307,15 @@ export const RBACMatrixView: React.FC = () => {
                             <td
                               key={r}
                               className={`p-3.5 text-center transition-colors ${
-                                isCurrent ? 'bg-mint-500/10 dark:bg-mint-950/40 border-x border-mint-500/30' : ''
+                                isCurrent ? 'bg-mint-50/40 border-x border-mint-200' : ''
                               }`}
                             >
                               <button
                                 onClick={() => togglePermissionForRole(r, perm.key)}
-                                className={`w-7 h-7 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer ${
+                                className={`w-7 h-7 rounded-lg inline-flex items-center justify-center transition-all ${
                                   has
-                                    ? 'bg-mint-500 text-white shadow-sm hover:bg-mint-600'
-                                    : 'bg-sand-200/80 dark:bg-surface-muted text-neutral-muted dark:text-neutral-subtle hover:bg-sand-300 dark:hover:bg-surface-soft'
+                                    ? 'bg-mint-500 text-canvas shadow-sm hover:bg-mint-600'
+                                    : 'bg-sand-200 text-neutral-muted hover:bg-sand-300'
                                 }`}
                                 title={t(
                                   has ? 'انقر لتعطيل الصلاحية لهذا الدور' : 'انقر لتفعيل الصلاحية لهذا الدور',
@@ -362,7 +360,7 @@ export const RBACMatrixView: React.FC = () => {
           <div className="surface-card p-0 overflow-hidden border border-surface-border">
             <table className="w-full text-start text-xs border-collapse">
               <thead>
-                <tr className="bg-sand-100/70 dark:bg-surface-soft border-b border-surface-border text-pine dark:text-white font-bold">
+                <tr className="bg-sand-100/70 border-b border-sand-300 text-pine font-bold">
                   <th className="p-3.5 text-start">{t('المستخدم', 'User')}</th>
                   <th className="p-3.5 text-start">{t('الدور والصلاحيات', 'Role & Permissions')}</th>
                   <th className="p-3.5 text-start">{t('الإدارة / القسم', 'Department')}</th>
@@ -377,14 +375,7 @@ export const RBACMatrixView: React.FC = () => {
                   const isCurrent = currentUser.id === u.id;
 
                   return (
-                    <tr
-                      key={u.id}
-                      className={`transition-colors ${
-                        isCurrent
-                          ? 'bg-mint-500/10 dark:bg-mint-950/40 border-s-4 border-mint-500'
-                          : 'hover:bg-sand-50/50 dark:hover:bg-surface-muted/40'
-                      }`}
-                    >
+                    <tr key={u.id} className={`hover:bg-sand-50/50 transition-colors ${isCurrent ? 'bg-mint-50/40' : ''}`}>
                       <td className="p-3.5">
                         <div className="flex items-center gap-3">
                           <Avatar
@@ -393,8 +384,8 @@ export const RBACMatrixView: React.FC = () => {
                             size="sm"
                           />
                           <div>
-                            <span className="font-bold text-pine dark:text-white block text-xs">{t(u.name, u.nameEn)}</span>
-                            <span className="text-[11px] text-neutral-muted dark:text-neutral-subtle font-mono">{u.email}</span>
+                            <span className="font-bold text-pine block text-xs">{t(u.name, u.nameEn)}</span>
+                            <span className="text-[11px] text-neutral-muted font-mono">{u.email}</span>
                           </div>
                         </div>
                       </td>
@@ -405,16 +396,16 @@ export const RBACMatrixView: React.FC = () => {
                         </Badge>
                       </td>
 
-                      <td className="p-3.5 font-medium text-neutral-main dark:text-neutral-200">
+                      <td className="p-3.5 font-medium text-neutral-main">
                         {t(u.department, u.departmentEn)}
                       </td>
 
-                      <td className="p-3.5 text-neutral-muted dark:text-neutral-subtle font-medium">
+                      <td className="p-3.5 text-neutral-muted">
                         {t(u.title, u.titleEn)}
                       </td>
 
                       <td className="p-3.5">
-                        <span className="inline-flex items-center gap-1.5 text-xs text-neutral-muted dark:text-neutral-subtle">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-neutral-muted">
                           <span className="w-2 h-2 rounded-full bg-emerald-500" />
                           {u.lastLogin || t('نشط', 'Active')}
                         </span>
@@ -422,8 +413,8 @@ export const RBACMatrixView: React.FC = () => {
 
                       <td className="p-3.5 text-center">
                         {isCurrent ? (
-                          <span className="text-xs font-bold text-mint-700 dark:text-mint-300 bg-mint-100 dark:bg-mint-950/80 border border-mint-200 dark:border-mint-700/60 px-3 py-1 rounded-lg inline-block">
-                            {t('أنت الآن ✓', 'Current User')}
+                          <span className="text-xs font-bold text-mint-600 bg-mint-100 px-2.5 py-1 rounded-lg">
+                            {t('أنت الآن', 'Active')}
                           </span>
                         ) : (
                           <Button
@@ -447,12 +438,12 @@ export const RBACMatrixView: React.FC = () => {
       {/* TAB 3: ROLE SIMULATOR & SALARY SHIELD DEMO */}
       {activeTab === 'simulation' && (
         <div className="space-y-4">
-          <div className="surface-card bg-sand-50/60 dark:bg-surface border border-surface-border">
-            <h2 className="text-base font-bold text-pine dark:text-white flex items-center gap-2">
+          <div className="surface-card bg-sand-50/60 border border-sand-300">
+            <h2 className="text-base font-bold text-pine flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-mint-500" />
-              {t('مختبر فحص وحماية البيانات الحساسة', 'Salary Shield & RBAC Live Sandbox')}
+              {t('مختبر فحص وحماية البيانات الحساسة (Salary Shield & RBAC Test)', 'Salary Shield & RBAC Live Sandbox')}
             </h2>
-            <p className="text-xs text-neutral-muted dark:text-neutral-subtle mt-1">
+            <p className="text-xs text-neutral-muted mt-1">
               {t(
                 'شاهد كيف تتغير رؤية الرواتب وأزرار الاعتماد وتعديل المراحل مباشرة عند التبديل بين الأدوار:',
                 'See how salary visibility, approval buttons, and stage edit controls adapt in real-time as you switch roles:'
@@ -467,14 +458,14 @@ export const RBACMatrixView: React.FC = () => {
                   <button
                     key={r}
                     onClick={() => switchRole(r)}
-                    className={`p-3 rounded-2xl border text-start transition-all cursor-pointer ${
+                    className={`p-3 rounded-2xl border text-start transition-all ${
                       isSelected
-                        ? 'bg-mint-500 text-white border-mint-600 shadow-md shadow-mint-500/20 transform -translate-y-0.5'
-                        : 'bg-surface-soft dark:bg-surface-muted text-neutral-main dark:text-white border-surface-border hover:border-mint-400 hover:bg-mint-50/10'
+                        ? 'bg-mint-500 text-canvas border-mint-600 shadow-md transform -translate-y-0.5'
+                        : 'bg-white text-neutral-main border-sand-300 hover:border-mint-400 hover:bg-sand-50'
                     }`}
                   >
                     <span className="text-xs font-bold block">{t(rDef.name, rDef.nameEn)}</span>
-                    <span className={`text-[10px] mt-1 block ${isSelected ? 'text-white/90' : 'text-neutral-muted dark:text-neutral-subtle'}`}>
+                    <span className={`text-[10px] mt-1 block ${isSelected ? 'text-canvas/80' : 'text-neutral-muted'}`}>
                       {r === 'hr_manager' || r === 'super_admin'
                         ? t('يرى كافة الرواتب والاعتمادات', 'Full salary & approvals')
                         : r === 'hiring_manager'
@@ -502,11 +493,11 @@ export const RBACMatrixView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-neutral-muted">{t('الراتب الحالي للمرشح:', 'Candidate Current Salary:')}</span>
                   {roleDefinitions[currentRole]?.permissions.includes('view_salary') ? (
-                    <span className="font-bold text-pine text-sm">45,000 {t('ج.م / شهرياً', 'EGP / mo')}</span>
+                    <span className="font-bold text-pine text-sm">45,000 ج.م / شهرياً</span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-sand-200 text-neutral-muted text-xs">
                       <EyeOff className="w-3.5 h-3.5 text-sand-500" />
-                      <span>•••• {t('ج.م', 'EGP')}</span>
+                      <span>•••• ج.م</span>
                       <span className="text-[10px] bg-amber-100 text-amber-800 px-1 rounded">{t('سري', 'Restricted')}</span>
                     </span>
                   )}
@@ -514,11 +505,11 @@ export const RBACMatrixView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-neutral-muted">{t('الراتب المتوقع للمرشح:', 'Candidate Expected Salary:')}</span>
                   {roleDefinitions[currentRole]?.permissions.includes('view_salary') ? (
-                    <span className="font-bold text-pine text-sm">60,000 {t('ج.م / شهرياً', 'EGP / mo')}</span>
+                    <span className="font-bold text-pine text-sm">60,000 ج.م / شهرياً</span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-sand-200 text-neutral-muted text-xs">
                       <EyeOff className="w-3.5 h-3.5 text-sand-500" />
-                      <span>•••• {t('ج.م', 'EGP')}</span>
+                      <span>•••• ج.م</span>
                       <span className="text-[10px] bg-amber-100 text-amber-800 px-1 rounded">{t('سري', 'Restricted')}</span>
                     </span>
                   )}

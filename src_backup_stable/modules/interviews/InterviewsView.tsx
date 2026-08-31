@@ -179,17 +179,15 @@ export const InterviewsView: React.FC = () => {
       <div className="surface-card border-surface-border">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <CalendarCheck className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card">
+              <CalendarCheck className="w-6 h-6 text-mint-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-pine">
-                  {t('الوحدة 5: المقابلات وبطاقات التقييم', 'Unit 5: Interviews & Scorecards')}
+                  {t('الوحدة 4: المقابلات والتقييمات المعيارية (Interviews & Scorecards)', 'Unit 4: Interviews & Scorecards')}
                 </h1>
-                <Badge variant="mint" size="sm">
-                  {t('بطاقات التقييم المعيارية', 'Competency Scorecards')}
-                </Badge>
+                <Badge variant="mint" size="sm">Competency Scorecards</Badge>
               </div>
               <p className="text-xs text-neutral-muted mt-1">
                 {t(
@@ -232,7 +230,7 @@ export const InterviewsView: React.FC = () => {
           return (
             <div
               key={interview.id}
-              className="surface-card border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up transition-all flex flex-col justify-between"
+              className="surface-card border border-surface-border hover:border-mint-400 transition-all flex flex-col justify-between"
             >
               <div className="space-y-3">
                 {/* Header */}
@@ -255,7 +253,7 @@ export const InterviewsView: React.FC = () => {
                 </div>
 
                 {/* Details */}
-                <div className="grid grid-cols-2 gap-2 bg-sand-50/80 dark:bg-surface-muted p-3 rounded-xl border border-surface-border text-xs">
+                <div className="grid grid-cols-2 gap-2 bg-sand-50 p-3 rounded-xl border border-sand-200 text-xs">
                   <div>
                     <span className="text-[10px] text-neutral-muted block">{t('نوع المقابلة:', 'Type:')}</span>
                     <span className="font-bold text-pine">{interview.type}</span>
@@ -611,10 +609,10 @@ export const InterviewsView: React.FC = () => {
                   alert(t('تم تأكيد حجز الموعد وإرسال دعوة التقويم ورابط Google Meet إلى بريدك الإلكتروني!', 'Slot booked! Calendar invite and Google Meet link sent.'));
                   setIsSelfBookingPreviewOpen(false);
                 }}
-                className="p-3 rounded-xl border border-surface-border bg-surface-soft dark:bg-surface-muted hover:border-mint-500 hover:bg-mint-50/20 dark:hover:bg-mint-950/40 text-start transition-all cursor-pointer"
+                className="p-3 rounded-xl border border-sand-300 bg-white hover:border-mint-500 hover:bg-mint-50 text-start transition-all"
               >
-                <span className="font-bold text-pine dark:text-white block">{slot.date}</span>
-                <span className="text-[11px] text-mint-700 dark:text-mint-400 font-semibold mt-0.5 block">{slot.time}</span>
+                <span className="font-bold text-pine block">{slot.date}</span>
+                <span className="text-[11px] text-mint-700 font-semibold mt-0.5 block">{slot.time}</span>
               </button>
             ))}
           </div>

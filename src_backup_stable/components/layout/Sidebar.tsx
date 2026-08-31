@@ -133,7 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       titleEn: 'RBAC Matrix & Security',
       icon: <ShieldCheck className="w-5 h-5" />,
       permission: 'manage_roles_matrix' as const,
-      badge: t('وحدة 1', 'Unit 1'),
+      badge: 'وحدة 1',
       badgeColor: 'bg-pine text-canvas border-mint-700',
     },
   ];

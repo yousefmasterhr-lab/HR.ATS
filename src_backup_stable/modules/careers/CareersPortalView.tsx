@@ -130,17 +130,15 @@ export const CareersPortalView: React.FC = () => {
       <div className="surface-card border-surface-border">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <Globe2 className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card">
+              <Globe2 className="w-6 h-6 text-mint-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-pine">
-                  {t('الوحدة 4: بوابة التوظيف وقنوات الاستقطاب', 'Unit 4: Careers Portal & Sourcing Hub')}
+                  {t('الوحدة 3 (ب): بوابة التوظيف وقنوات الاستقطاب (Careers Hub)', 'Careers Portal & UTM Sourcing Hub')}
                 </h1>
-                <Badge variant="mint" size="sm">
-                  {t('قنوات متعددة', 'Multi-channel Sourcing')}
-                </Badge>
+                <Badge variant="mint" size="sm">Multi-channel Sourcing</Badge>
               </div>
               <p className="text-xs text-neutral-muted mt-1">
                 {t(

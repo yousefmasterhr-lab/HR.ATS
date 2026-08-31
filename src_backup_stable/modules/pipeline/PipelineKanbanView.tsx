@@ -42,7 +42,6 @@ export const PipelineKanbanView: React.FC = () => {
   const [jobFilter, setJobFilter] = useState<string>('all');
   const [minScoreFilter, setMinScoreFilter] = useState<number>(0);
   const [draggedCandidateId, setDraggedCandidateId] = useState<string | null>(null);
-  const [dragOverStage, setDragOverStage] = useState<string | null>(null);
   const [newNoteText, setNewNoteText] = useState('');
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
@@ -50,23 +49,11 @@ export const PipelineKanbanView: React.FC = () => {
   // Drag & drop handlers
   const handleDragStart = (e: React.DragEvent, id: string) => {
     e.dataTransfer.setData('text/plain', id);
-    e.dataTransfer.effectAllowed = 'move';
     setDraggedCandidateId(id);
   };
 
-  const handleDragOver = (e: React.DragEvent, stageId: string) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (dragOverStage !== stageId) {
-      setDragOverStage(stageId);
-    }
-  };
-
-  const handleDragLeave = (e: React.DragEvent, stageId: string) => {
-    e.preventDefault();
-    if (dragOverStage === stageId) {
-      setDragOverStage(null);
-    }
   };
 
   const handleDrop = (e: React.DragEvent, targetStage: PipelineStageId) => {
@@ -76,12 +63,6 @@ export const PipelineKanbanView: React.FC = () => {
       moveCandidateStage(id, targetStage);
     }
     setDraggedCandidateId(null);
-    setDragOverStage(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedCandidateId(null);
-    setDragOverStage(null);
   };
 
   // Filter candidates
@@ -130,36 +111,34 @@ export const PipelineKanbanView: React.FC = () => {
   return (
     <div className="space-y-5 animate-fade-in">
       {/* Header & Pipeline Control Bar */}
-      <div className="surface-card border-surface-border p-4 sm:p-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <Kanban className="w-6 h-6 text-white" />
+      <div className="surface-card border-surface-border">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card">
+              <Kanban className="w-6 h-6 text-mint-300" />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-lg sm:text-xl font-bold text-pine">
-                  {t('الوحدة 3: مسار وتتبع المرشحين', 'Unit 3: Candidate Pipeline')}
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-pine">
+                  {t('الوحدة 3: مسار وتتبع المرشحين (Kanban Pipeline)', 'Unit 3: Candidate Pipeline & Kanban')}
                 </h1>
-                <Badge variant="mint" size="sm">
-                  {t('لوحة كانبان', 'Kanban Board')}
-                </Badge>
+                <Badge variant="mint" size="sm">Drag & Drop</Badge>
               </div>
-              <p className="text-xs text-neutral-muted mt-0.5">
+              <p className="text-xs text-neutral-muted mt-1">
                 {t(
-                  'لوحة تحكم تفاعلية بالسحب والإفلات لمتابعة مراحل المرشحين وقارئ السير الذاتية الذكي.',
-                  'Interactive Kanban board with live drag & drop and AI resume matching.'
+                  'لوحة تحكم تفاعلية بالسحب والإفلات مع قارئ السير الذاتية الذكي، أسئلة الاستبعاد، وسجل التدقيق.',
+                  'Interactive pipeline board with instant drag & drop, CV parser, knockout filter, and audit trails.'
                 )}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
+          <div className="flex items-center gap-2 w-full md:w-auto">
             {/* Job Filter */}
             <select
               value={jobFilter}
               onChange={(e) => setJobFilter(e.target.value)}
-              className="bg-surface-soft border border-surface-border rounded-xl px-3 py-2 text-xs text-pine font-bold focus:outline-none focus:ring-2 focus:ring-mint-500/30 max-w-[200px] sm:max-w-[240px] truncate"
+              className="bg-surface border border-surface-border rounded-xl px-3 py-1.5 text-xs text-pine font-bold focus:outline-none focus:ring-2 focus:ring-mint-500/20"
             >
               <option value="all">{t('جميع الوظائف المفتوحة', 'All Job Requisitions')}</option>
               {requisitions.map((r) => (
@@ -173,7 +152,7 @@ export const PipelineKanbanView: React.FC = () => {
             <select
               value={minScoreFilter}
               onChange={(e) => setMinScoreFilter(Number(e.target.value))}
-              className="bg-surface-soft border border-surface-border rounded-xl px-3 py-2 text-xs text-pine font-bold focus:outline-none focus:ring-2 focus:ring-mint-500/30 shrink-0"
+              className="bg-surface border border-surface-border rounded-xl px-3 py-1.5 text-xs text-pine font-bold focus:outline-none focus:ring-2 focus:ring-mint-500/20"
             >
               <option value={0}>{t('كل نسب المطابقة', 'All Match Scores')}</option>
               <option value={80}>{t('المطابقة ≥ 80%', 'Match ≥ 80%')}</option>
@@ -187,124 +166,101 @@ export const PipelineKanbanView: React.FC = () => {
       <div className="flex gap-4 overflow-x-auto pb-4 pt-1 items-start min-h-[650px]">
         {DEFAULT_STAGES.filter((s) => s.id !== 'rejected').map((stage) => {
           const stageCandidates = filteredCandidates.filter((c) => c.stage === stage.id);
-          const isOverThisStage = dragOverStage === stage.id;
 
           return (
             <div
               key={stage.id}
-              onDragOver={(e) => handleDragOver(e, stage.id)}
-              onDragLeave={(e) => handleDragLeave(e, stage.id)}
+              onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, stage.id)}
-              className={`w-80 shrink-0 bg-sidebar/80 dark:bg-surface/50 rounded-2xl border transition-all duration-200 flex flex-col max-h-[calc(100vh-250px)] shadow-xs ${
-                isOverThisStage
-                  ? 'ring-2 ring-mint-500 border-mint-500 bg-mint-50/20 dark:bg-mint-950/40 scale-[1.015] shadow-lg shadow-mint-500/15'
-                  : 'border-sidebar-border hover:border-mint-400/50'
-              }`}
+              className="w-80 shrink-0 bg-sidebar/80 rounded-2xl border border-sidebar-border flex flex-col max-h-[calc(100vh-250px)] shadow-xs transition-colors hover:border-mint-300"
             >
               {/* Column Header */}
-              <div className="p-3.5 border-b border-sidebar-border bg-surface/80 dark:bg-surface-muted/60 rounded-t-2xl flex items-center justify-between">
+              <div className="p-3.5 border-b border-sidebar-border bg-surface/80 rounded-t-2xl flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span
-                    className="w-2.5 h-2.5 rounded-full shadow-xs"
+                    className="w-2.5 h-2.5 rounded-full"
                     style={{ backgroundColor: stage.color }}
                   />
                   <h3 className="font-bold text-pine text-xs">{t(stage.title, stage.titleEn)}</h3>
                 </div>
-                <span className="text-xs font-extrabold bg-sand-200 dark:bg-surface-soft text-pine px-2 py-0.5 rounded-full border border-surface-border">
+                <span className="text-xs font-extrabold bg-sand-200 text-pine px-2 py-0.5 rounded-full">
                   {stageCandidates.length}
                 </span>
               </div>
 
               {/* Cards List */}
               <div className="p-3 space-y-3 overflow-y-auto flex-1">
-                {/* Active Drop Placeholder Indicator */}
-                {isOverThisStage && (
-                  <div className="p-3 border-2 border-dashed border-mint-500 bg-mint-500/15 rounded-xl flex items-center justify-center gap-2 text-mint-700 dark:text-mint-300 font-bold text-xs animate-pulse">
-                    <span>↓</span>
-                    {t('إفلات المرشح هنا لتحديث المرحلة', 'Drop candidate here')}
-                  </div>
-                )}
-
-                {stageCandidates.map((cand) => {
-                  const isBeingDragged = draggedCandidateId === cand.id;
-
-                  return (
-                    <div
-                      key={cand.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, cand.id)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => {
-                        setSelectedCandidate(cand);
-                        setActiveTab('overview');
-                      }}
-                      className={`bg-surface rounded-xl p-3.5 border shadow-card cursor-grab active:cursor-grabbing transition-all transform space-y-2.5 group ${
-                        isBeingDragged
-                          ? 'opacity-40 scale-95 border-dashed border-2 border-mint-500 shadow-none'
-                          : 'border-surface-border hover:shadow-card-hover hover:border-mint-400 hover:-translate-y-1'
-                      }`}
-                    >
-                      {/* Header: Avatar, Name, Match Score */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <Avatar
-                            name={cand.name}
-                            src={cand.avatar}
-                            size="sm"
-                          />
-                          <div>
-                            <h4 className="font-bold text-pine text-xs group-hover:text-mint-600 transition-colors leading-tight">
-                              {t(cand.name, cand.nameEn)}
-                            </h4>
-                            <span className="text-[10px] text-neutral-muted block truncate max-w-[140px]">
-                              {cand.currentTitle}
-                            </span>
-                          </div>
+                {stageCandidates.map((cand) => (
+                  <div
+                    key={cand.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, cand.id)}
+                    onClick={() => {
+                      setSelectedCandidate(cand);
+                      setActiveTab('overview');
+                    }}
+                    className="bg-surface rounded-xl p-3.5 border border-surface-border shadow-card hover:shadow-card-hover hover:border-mint-400 cursor-grab active:cursor-grabbing transition-all transform hover:-translate-y-0.5 space-y-2.5 group"
+                  >
+                    {/* Header: Avatar, Name, Match Score */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar
+                          name={cand.name}
+                          src={cand.avatar}
+                          size="sm"
+                        />
+                        <div>
+                          <h4 className="font-bold text-pine text-xs group-hover:text-mint-600 transition-colors leading-tight">
+                            {t(cand.name, cand.nameEn)}
+                          </h4>
+                          <span className="text-[10px] text-neutral-muted block truncate max-w-[140px]">
+                            {cand.currentTitle}
+                          </span>
                         </div>
                       </div>
-
-                      {/* Match Score & Stars */}
-                      <div className="flex items-center justify-between pt-1 border-t border-surface-border">
-                        {getMatchScoreBadge(cand.matchScore)}
-                        <div className="flex items-center text-amber-500">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-3 h-3 ${
-                                i < cand.rating ? 'fill-amber-400 text-amber-400' : 'text-sand-300 dark:text-sand-400/40'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Job Title & Experience */}
-                      <div className="flex items-center justify-between text-[11px] text-neutral-muted">
-                        <span className="truncate max-w-[130px] font-medium text-pine">
-                          {cand.jobTitle}
-                        </span>
-                        <span className="shrink-0 font-medium">{cand.experienceYears} {t('سنوات خبرة', 'yrs exp')}</span>
-                      </div>
-
-                      {/* Tags */}
-                      {cand.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {cand.tags.slice(0, 2).map((tg, idx) => (
-                            <span
-                              key={idx}
-                              className="text-[9px] font-semibold bg-sand-100 dark:bg-surface-muted text-pine px-1.5 py-0.5 rounded border border-surface-border"
-                            >
-                              {tg}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
-                  );
-                })}
 
-                {stageCandidates.length === 0 && !isOverThisStage && (
-                  <div className="py-8 text-center text-xs text-neutral-subtle border-2 border-dashed border-surface-border rounded-xl">
+                    {/* Match Score & Stars */}
+                    <div className="flex items-center justify-between pt-1 border-t border-sand-100">
+                      {getMatchScoreBadge(cand.matchScore)}
+                      <div className="flex items-center text-amber-500">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${
+                              i < cand.rating ? 'fill-amber-400 text-amber-400' : 'text-sand-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Job Title & Experience */}
+                    <div className="flex items-center justify-between text-[11px] text-neutral-muted">
+                      <span className="truncate max-w-[130px] font-medium text-pine">
+                        {cand.jobTitle}
+                      </span>
+                      <span className="shrink-0">{cand.experienceYears} {t('سنوات خبرة', 'yrs exp')}</span>
+                    </div>
+
+                    {/* Tags */}
+                    {cand.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {cand.tags.slice(0, 2).map((tg, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[9px] font-semibold bg-sand-100 text-pine px-1.5 py-0.2 rounded border border-sand-200"
+                          >
+                            {tg}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {stageCandidates.length === 0 && (
+                  <div className="py-8 text-center text-xs text-neutral-subtle border-2 border-dashed border-sand-200 rounded-xl">
                     {t('اسحب المرشحين إلى هنا', 'Drop candidates here')}
                   </div>
                 )}

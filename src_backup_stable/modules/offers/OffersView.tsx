@@ -150,7 +150,7 @@ export const OffersView: React.FC = () => {
     const rect = canvas.getBoundingClientRect();
     const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
     const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-    ctx.strokeStyle = '#38A37F';
+    ctx.strokeStyle = '#1B4938';
     ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
     ctx.lineTo(x, y);
@@ -185,17 +185,15 @@ export const OffersView: React.FC = () => {
       <div className="surface-card border-surface-border">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <FileSignature className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card">
+              <FileSignature className="w-6 h-6 text-mint-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-pine">
-                  {t('الوحدة 6: العروض ومسوغات التعيين', 'Unit 6: Offers & Pre-boarding')}
+                  {t('الوحدة 5: العروض الوظيفية والتهيئة (Offers & Pre-boarding)', 'Unit 5: Offers & Pre-boarding')}
                 </h1>
-                <Badge variant="mint" size="sm">
-                  {t('توقيع رقمي ومزامنة', 'E-Sign & Core HR Sync')}
-                </Badge>
+                <Badge variant="mint" size="sm">E-Sign & Core HR Sync</Badge>
               </div>
               <p className="text-xs text-neutral-muted mt-1">
                 {t(
@@ -255,58 +253,58 @@ export const OffersView: React.FC = () => {
             </div>
 
             {/* Compensation Breakdown Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 bg-sand-50 p-3.5 rounded-xl border border-sand-200 text-xs">
               <div>
-                <span className="text-[11px] text-neutral-muted dark:text-neutral-subtle block font-semibold">{t('الراتب الأساسي:', 'Basic Salary:')}</span>
+                <span className="text-[11px] text-neutral-muted block">{t('الراتب الأساسي:', 'Basic Salary:')}</span>
                 <SalaryShield amount={offer.compensation.basicSalary} currency={offer.compensation.currency} />
               </div>
               <div>
-                <span className="text-[11px] text-neutral-muted dark:text-neutral-subtle block font-semibold">{t('بدل السكن:', 'Housing Allowance:')}</span>
+                <span className="text-[11px] text-neutral-muted block">{t('بدل السكن:', 'Housing Allowance:')}</span>
                 <SalaryShield amount={offer.compensation.housingAllowance} currency={offer.compensation.currency} />
               </div>
               <div>
-                <span className="text-[11px] text-neutral-muted dark:text-neutral-subtle block font-semibold">{t('بدل النقل:', 'Transport Allowance:')}</span>
+                <span className="text-[11px] text-neutral-muted block">{t('بدل النقل:', 'Transport Allowance:')}</span>
                 <SalaryShield amount={offer.compensation.transportAllowance} currency={offer.compensation.currency} />
               </div>
               <div>
-                <span className="text-[11px] text-neutral-muted dark:text-neutral-subtle block font-semibold">{t('بدلات ومزايا أخرى:', 'Other Allowances:')}</span>
+                <span className="text-[11px] text-neutral-muted block">{t('بدلات ومزايا أخرى:', 'Other Allowances:')}</span>
                 <SalaryShield amount={offer.compensation.otherAllowance} currency={offer.compensation.currency} />
               </div>
-              <div className="bg-mint-500/10 dark:bg-mint-950/60 p-2.5 rounded-xl border border-mint-300 dark:border-mint-700/60 flex flex-col justify-between">
-                <span className="text-[11px] text-mint-700 dark:text-mint-300 font-bold block">{t('إجمالي الراتب الشهري:', 'Total Monthly:')}</span>
+              <div className="bg-white p-2 rounded-lg border border-mint-200">
+                <span className="text-[11px] text-mint-800 font-bold block">{t('إجمالي الراتب الشهري:', 'Total Monthly:')}</span>
                 <SalaryShield amount={offer.compensation.totalMonthly} currency={offer.compensation.currency} />
               </div>
             </div>
 
             {/* Preboarding Documents Checklist */}
             <div className="pt-1">
-              <h5 className="text-xs font-bold text-pine dark:text-white mb-2 flex items-center gap-1.5">
+              <h5 className="text-xs font-bold text-pine mb-2 flex items-center gap-1.5">
                 <FileCheck className="w-4 h-4 text-mint-600" />
-                {t('مسوغات التعيين والمستندات الرسمية المطلوبة', 'Required Pre-boarding Documents')}
+                {t('مسوغات التعيين والمستندات الرسمية المطلوبة (Pre-boarding Documents):', 'Required Documents:')}
               </h5>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {offer.preboardingDocuments.map((doc) => (
                   <div
                     key={doc.id}
-                    className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-all ${
+                    className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
                       doc.verificationStatus === 'verified'
-                        ? 'bg-mint-50/70 dark:bg-mint-950/40 border-mint-200 dark:border-mint-800/60'
+                        ? 'bg-mint-50/50 border-mint-200'
                         : doc.isUploaded
-                        ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60'
-                        : 'bg-sand-50/70 dark:bg-surface-muted border-surface-border'
+                        ? 'bg-amber-50/50 border-amber-200'
+                        : 'bg-sand-50/60 border-sand-200'
                     }`}
                   >
                     <div>
-                      <span className="font-bold text-pine dark:text-white block">{t(doc.title, doc.titleEn)}</span>
-                      <span className="text-[10px] text-neutral-muted dark:text-neutral-subtle block mt-0.5">
+                      <span className="font-bold text-pine block">{t(doc.title, doc.titleEn)}</span>
+                      <span className="text-[10px] text-neutral-muted">
                         {doc.isUploaded ? `${doc.fileName} (${doc.fileSize})` : t('لم يُرفع بعد', 'Not uploaded')}
                       </span>
                     </div>
 
                     <div>
                       {doc.verificationStatus === 'verified' ? (
-                        <span className="text-[10px] font-bold text-mint-700 dark:text-mint-300 bg-mint-100 dark:bg-mint-900/60 px-2 py-0.5 rounded border border-mint-200 dark:border-mint-700/50">
+                        <span className="text-[10px] font-bold text-mint-700 bg-mint-100 px-2 py-0.5 rounded">
                           {t('معتمد ✓', 'Verified')}
                         </span>
                       ) : doc.isUploaded ? (
@@ -449,7 +447,7 @@ export const OffersView: React.FC = () => {
           {/* Monthly Total Computed */}
           <div className="p-3 bg-mint-50 rounded-xl border border-mint-200 flex items-center justify-between">
             <span className="font-bold text-pine">{t('إجمالي الراتب الشهري المستحق:', 'Total Monthly Package:')}</span>
-            <span className="text-base font-black text-mint-700">{totalMonthly.toLocaleString()} {t('ج.م', 'EGP')}</span>
+            <span className="text-base font-black text-mint-700">{totalMonthly.toLocaleString()} ج.م</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -491,17 +489,17 @@ export const OffersView: React.FC = () => {
         <Modal
           isOpen={isSignModalOpen}
           onClose={() => setIsSignModalOpen(false)}
-          title={t('بوابة التوقيع الإلكتروني المعتمد', 'Digital E-Signature Portal')}
+          title={t('بوابة التوقيع الإلكتروني المعتمد (Digital E-Signature Pad)', 'E-Signature Portal')}
           subtitle={`${t('المرشح:', 'Candidate:')} ${selectedOffer.candidateName} • ${selectedOffer.jobTitle}`}
           maxWidth="lg"
         >
           <div className="space-y-4 text-xs">
-            <div className="p-3.5 bg-sand-50/80 dark:bg-surface-muted rounded-xl border border-surface-border leading-relaxed text-neutral-main dark:text-neutral-200">
+            <div className="p-3 bg-sand-50 rounded-xl border border-sand-200 leading-relaxed text-neutral-main">
               {t(
                 'أقر أنا الموقع أدناه بقبولي للعرض الوظيفي المقدم براتب شهري إجمالي قدره ',
                 'I hereby accept the job offer with total monthly compensation of '
               )}
-              <strong className="text-pine dark:text-white font-bold">{selectedOffer.compensation.totalMonthly.toLocaleString()} {t('ج.م', 'EGP')}</strong>
+              <strong className="text-pine">{selectedOffer.compensation.totalMonthly.toLocaleString()} ج.م</strong>
               {t(' والالتزام بكافة الشروط واللوائح.', ' and agree to all terms and conditions.')}
             </div>
 
@@ -512,13 +510,13 @@ export const OffersView: React.FC = () => {
                 <button
                   type="button"
                   onClick={clearSignature}
-                  className="text-terracotta hover:underline text-[11px] font-bold cursor-pointer"
+                  className="text-terracotta hover:underline text-[11px] font-bold"
                 >
                   {t('مسح التوقيع وإعادة المحاولة', 'Clear Signature')}
                 </button>
               </div>
 
-              <div className="border-2 border-dashed border-mint-500/80 rounded-xl bg-surface-soft dark:bg-surface-muted p-1 shadow-inner">
+              <div className="border-2 border-dashed border-mint-400 rounded-xl bg-white p-1">
                 <canvas
                   ref={canvasRef}
                   width={460}
@@ -530,10 +528,10 @@ export const OffersView: React.FC = () => {
                   onTouchStart={startDrawing}
                   onTouchMove={draw}
                   onTouchEnd={stopDrawing}
-                  className="w-full h-36 cursor-crosshair touch-none rounded-lg"
+                  className="w-full h-36 cursor-crosshair touch-none"
                 />
               </div>
-              <span className="text-[10px] text-neutral-muted dark:text-neutral-subtle block mt-1">
+              <span className="text-[10px] text-neutral-muted block mt-1">
                 {t('سيتم ختم التوقيع برقم الـ IP والطابع الزمني المعتمد قانونياً.', 'Signature is legally stamped with IP address and UTC timestamp.')}
               </span>
             </div>

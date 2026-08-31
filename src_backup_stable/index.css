@@ -320,112 +320,21 @@ body.dark {
   border-color: #263C32 !important;
 }
 
-/* Professional Animations & Transitions */
+/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes scaleUp {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(56, 163, 127, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(56, 163, 127, 0);
-  }
-}
-
-@keyframes floatGentle {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-/* Animation Classes */
 .animate-fade-in {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in-down {
-  animation: fadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.2s ease-out forwards;
 }
 
 .animate-scale-up {
-  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s infinite;
-}
-
-.animate-float {
-  animation: floatGentle 3s ease-in-out infinite;
-}
-
-/* Stagger Delays for Grid Elements */
-.stagger-1 { animation-delay: 40ms; }
-.stagger-2 { animation-delay: 80ms; }
-.stagger-3 { animation-delay: 120ms; }
-.stagger-4 { animation-delay: 160ms; }
-.stagger-5 { animation-delay: 200ms; }
-
-/* Interactive Micro-Interactions */
-.card-interactive {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.card-interactive:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(56, 163, 127, 0.12);
-}
-
-.table-row-hover {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.table-row-hover:hover {
-  background-color: var(--bg-surface-muted);
-}
-
-button:active, .btn-primary:active, .btn-secondary:active {
-  transform: scale(0.97);
-  transition: transform 0.08s ease-in-out;
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 1, 1) forwards;
 }

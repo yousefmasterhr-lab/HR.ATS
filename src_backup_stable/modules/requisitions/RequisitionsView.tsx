@@ -177,15 +177,15 @@ export const RequisitionsView: React.FC = () => {
       <div className="surface-card border-surface-border">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <FileText className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card">
+              <FileText className="w-6 h-6 text-mint-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-pine">
                   {t('الوحدة 2: إدارة طلبات الاحتياج والاعتمادات', 'Unit 2: Job Requisitions & Approvals')}
                 </h1>
-                <Badge variant="mint" size="sm">{t('تخطيط الاحتياج', 'Manpower Planning')}</Badge>
+                <Badge variant="mint" size="sm">Manpower Planning</Badge>
               </div>
               <p className="text-xs text-neutral-muted mt-1">
                 {t(
@@ -220,34 +220,34 @@ export const RequisitionsView: React.FC = () => {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5 pt-4 border-t border-surface-border">
-          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up stagger-1">
-            <span className="text-[11px] text-neutral-muted font-bold block">{t('إجمالي الشواغر المفتوحة', 'Total Requisitions')}</span>
-            <span className="text-xl font-black text-pine mt-1 block">{requisitions.length} <span className="text-xs font-normal text-neutral-muted">{t('طلب', 'Reqs')}</span></span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5 pt-4 border-t border-sand-200">
+          <div className="bg-white/80 p-3 rounded-xl border border-sand-200">
+            <span className="text-[11px] text-neutral-muted block">{t('إجمالي الشواغر المفتوحة', 'Total Requisitions')}</span>
+            <span className="text-lg font-bold text-pine">{requisitions.length} {t('طلب', 'Reqs')}</span>
           </div>
-          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-amber-400 card-interactive animate-fade-in-up stagger-2">
-            <span className="text-[11px] text-neutral-muted font-bold block">{t('طلبات بانتظار الاعتماد', 'Pending Approvals')}</span>
-            <span className="text-xl font-black text-amber-600 dark:text-amber-400 mt-1 block">
-              {requisitions.filter((r) => r.status.startsWith('pending')).length} <span className="text-xs font-normal text-neutral-muted">{t('طلبات', 'Pending')}</span>
+          <div className="bg-white/80 p-3 rounded-xl border border-sand-200">
+            <span className="text-[11px] text-neutral-muted block">{t('طلبات بانتظار الاعتماد', 'Pending Approvals')}</span>
+            <span className="text-lg font-bold text-amber-700">
+              {requisitions.filter((r) => r.status.startsWith('pending')).length} {t('طلبات', 'Pending')}
             </span>
           </div>
-          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up stagger-3">
-            <span className="text-[11px] text-neutral-muted font-bold block">{t('شواغر نشطة منشورة', 'Published Active')}</span>
-            <span className="text-xl font-black text-mint-600 dark:text-mint-400 mt-1 block">
-              {requisitions.filter((r) => r.status === 'published').length} <span className="text-xs font-normal text-neutral-muted">{t('شاغر', 'Active')}</span>
+          <div className="bg-white/80 p-3 rounded-xl border border-sand-200">
+            <span className="text-[11px] text-neutral-muted block">{t('شواغر نشطة منشورة', 'Published Active')}</span>
+            <span className="text-lg font-bold text-mint-600">
+              {requisitions.filter((r) => r.status === 'published').length} {t('شاغر', 'Active')}
             </span>
           </div>
-          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up stagger-4">
-            <span className="text-[11px] text-neutral-muted font-bold block">{t('إجمالي الكوادر المستهدفة', 'Target Headcounts')}</span>
-            <span className="text-xl font-black text-pine mt-1 block">
-              {requisitions.reduce((acc, r) => acc + r.headcount, 0)} <span className="text-xs font-normal text-neutral-muted">{t('موظف', 'Staff')}</span>
+          <div className="bg-white/80 p-3 rounded-xl border border-sand-200">
+            <span className="text-[11px] text-neutral-muted block">{t('إجمالي الكوادر المستهدفة', 'Target Headcounts')}</span>
+            <span className="text-lg font-bold text-pine">
+              {requisitions.reduce((acc, r) => acc + r.headcount, 0)} {t('موظف', 'Staff')}
             </span>
           </div>
         </div>
       </div>
 
       {/* Filter Tabs & Table */}
-      <div className="surface-card p-0 overflow-hidden border border-surface-border animate-fade-in-up stagger-3">
+      <div className="surface-card p-0 overflow-hidden border border-surface-border">
         <div className="p-4 bg-sand-50/80 border-b border-surface-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-mint-600" />
@@ -264,7 +264,7 @@ export const RequisitionsView: React.FC = () => {
                   onClick={() => setStatusFilter(f.key)}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
                     statusFilter === f.key
-                      ? 'bg-mint-500 text-canvas shadow-sm scale-105'
+                      ? 'bg-mint-500 text-canvas shadow-sm'
                       : 'text-neutral-muted hover:text-pine hover:bg-sand-200/50'
                   }`}
                 >
@@ -297,7 +297,7 @@ export const RequisitionsView: React.FC = () => {
                 const approvedTiers = req.approvalChain.filter((s) => s.status === 'approved').length;
 
                 return (
-                  <tr key={req.id} className="table-row-hover hover:bg-sand-50/50 dark:hover:bg-surface-muted transition-all">
+                  <tr key={req.id} className="hover:bg-sand-50/50 transition-colors">
                     <td className="p-3.5">
                       <div className="flex flex-col">
                         <span className="font-mono text-[11px] text-mint-700 font-bold">{req.code}</span>
@@ -395,37 +395,35 @@ export const RequisitionsView: React.FC = () => {
         >
           <div className="space-y-5">
             {/* Header info */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-sand-50 p-3.5 rounded-xl border border-sand-200 text-xs">
               <div>
-                <span className="text-neutral-muted dark:text-neutral-subtle block text-[11px] font-semibold">{t('الإدارة الطالبة:', 'Department:')}</span>
-                <span className="font-bold text-pine dark:text-white mt-0.5 block">{t(selectedReq.department, selectedReq.departmentEn)}</span>
+                <span className="text-neutral-muted block text-[11px]">{t('الإدارة الطالبة:', 'Department:')}</span>
+                <span className="font-bold text-pine">{t(selectedReq.department, selectedReq.departmentEn)}</span>
               </div>
               <div>
-                <span className="text-neutral-muted dark:text-neutral-subtle block text-[11px] font-semibold">{t('المدير المباشر:', 'Hiring Manager:')}</span>
-                <span className="font-bold text-pine dark:text-white mt-0.5 block">{selectedReq.hiringManagerName}</span>
+                <span className="text-neutral-muted block text-[11px]">{t('المدير المباشر:', 'Hiring Manager:')}</span>
+                <span className="font-bold text-pine">{selectedReq.hiringManagerName}</span>
               </div>
               <div>
-                <span className="text-neutral-muted dark:text-neutral-subtle block text-[11px] font-semibold">{t('العدد المطلوب:', 'Headcount:')}</span>
-                <span className="font-bold text-pine dark:text-white mt-0.5 block">{selectedReq.headcount} {t('موظف', 'Headcount')}</span>
+                <span className="text-neutral-muted block text-[11px]">{t('العدد المطلوب:', 'Headcount:')}</span>
+                <span className="font-bold text-pine">{selectedReq.headcount} {t('موظف', 'Headcount')}</span>
               </div>
               <div>
-                <span className="text-neutral-muted dark:text-neutral-subtle block text-[11px] font-semibold">{t('الميزانية المعتمدة:', 'Budget Range:')}</span>
-                <div className="mt-0.5">
-                  <SalaryShield minAmount={selectedReq.budgetMin} maxAmount={selectedReq.budgetMax} currency={selectedReq.currency} />
-                </div>
+                <span className="text-neutral-muted block text-[11px]">{t('الميزانية المعتمدة:', 'Budget Range:')}</span>
+                <SalaryShield minAmount={selectedReq.budgetMin} maxAmount={selectedReq.budgetMax} currency={selectedReq.currency} />
               </div>
             </div>
 
             {/* Description & Competencies */}
             <div>
-              <h4 className="text-xs font-bold text-pine dark:text-white mb-1.5">{t('الوصف الوظيفي والمسؤوليات:', 'Job Description & Scope:')}</h4>
-              <p className="text-xs text-neutral-main dark:text-neutral-200 bg-surface-muted dark:bg-surface-soft p-3 rounded-xl border border-surface-border leading-relaxed">
+              <h4 className="text-xs font-bold text-pine mb-1.5">{t('الوصف الوظيفي والمسؤوليات:', 'Job Description & Scope:')}</h4>
+              <p className="text-xs text-neutral-main bg-white p-3 rounded-xl border border-surface-border leading-relaxed">
                 {t(selectedReq.description, selectedReq.descriptionEn)}
               </p>
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-pine dark:text-white mb-1.5">{t('الجدارات والمهارات الأساسية:', 'Required Competencies & Skills:')}</h4>
+              <h4 className="text-xs font-bold text-pine mb-1.5">{t('الجدارات والمهارات الأساسية:', 'Required Competencies & Skills:')}</h4>
               <div className="flex flex-wrap gap-1.5">
                 {selectedReq.skills.map((skill, idx) => (
                   <Badge key={idx} variant="neutral" size="sm">
@@ -437,8 +435,8 @@ export const RequisitionsView: React.FC = () => {
 
             {/* Multi-tier Approval Stepper */}
             <div className="pt-3 border-t border-surface-border">
-              <h4 className="text-xs font-bold text-pine dark:text-white mb-3 flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-mint-500" />
+              <h4 className="text-xs font-bold text-pine mb-3 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-mint-600" />
                 {t('مسار الاعتمادات متعدد المستويات (Multi-tier Approval State Machine):', 'Multi-tier Approval State Machine:')}
               </h4>
 
@@ -449,37 +447,35 @@ export const RequisitionsView: React.FC = () => {
                   return (
                     <div
                       key={step.tier}
-                      className={`p-4 rounded-xl border transition-all ${
+                      className={`p-3.5 rounded-xl border transition-all ${
                         step.status === 'approved'
-                          ? 'bg-mint-50/70 dark:bg-mint-950/40 border-mint-200 dark:border-mint-800/60'
+                          ? 'bg-mint-50/50 border-mint-200'
                           : step.status === 'rejected'
-                          ? 'bg-rose-50/70 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/60'
+                          ? 'bg-rose-50/50 border-rose-200'
                           : isCurrentPending
-                          ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-500/60 ring-1 ring-amber-400/80 dark:ring-amber-500/50 shadow-sm'
-                          : 'bg-sand-50/70 dark:bg-surface-muted border-surface-border'
+                          ? 'bg-amber-50/60 border-amber-300 ring-1 ring-amber-300'
+                          : 'bg-sand-50/50 border-sand-200 opacity-60'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2.5">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${
+                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                               step.status === 'approved'
-                                ? 'bg-mint-500 text-white shadow-sm shadow-mint-500/30'
+                                ? 'bg-mint-500 text-canvas'
                                 : step.status === 'rejected'
-                                ? 'bg-rose-500 text-white shadow-sm shadow-rose-500/30'
-                                : isCurrentPending
-                                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/30 animate-pulse-glow'
-                                : 'bg-sand-300 dark:bg-surface text-neutral-muted dark:text-neutral-subtle border border-surface-border'
+                                ? 'bg-rose-500 text-canvas'
+                                : 'bg-sand-300 text-neutral-muted'
                             }`}
                           >
                             {step.status === 'approved' ? <Check className="w-4 h-4" /> : step.tier}
                           </div>
                           <div>
-                            <span className="font-bold text-pine dark:text-white text-xs sm:text-sm block">
+                            <span className="font-bold text-pine text-xs block">
                               {t(step.tierName, step.tierNameEn)}
                             </span>
-                            <span className="text-[11px] text-neutral-muted dark:text-neutral-300 block mt-0.5">
-                              {step.approverName} <span className="text-neutral-subtle dark:text-neutral-400">({step.role})</span>
+                            <span className="text-[11px] text-neutral-muted">
+                              {step.approverName} ({step.role})
                             </span>
                           </div>
                         </div>
@@ -502,20 +498,20 @@ export const RequisitionsView: React.FC = () => {
                       </div>
 
                       {step.comments && (
-                        <p className="mt-3 text-xs text-neutral-main dark:text-neutral-200 bg-surface/90 dark:bg-surface-soft p-2.5 rounded-lg border border-surface-border leading-relaxed">
-                          <span className="font-bold text-mint-700 dark:text-mint-400">{t('ملاحظة المعتمد:', 'Note:')}</span> {step.comments}
+                        <p className="mt-2 text-xs text-neutral-main bg-white/70 p-2 rounded-lg border border-sand-200">
+                          <span className="font-bold text-neutral-muted">{t('ملاحظة المعتمد:', 'Note:')}</span> {step.comments}
                         </p>
                       )}
 
                       {/* Approval Actions for Authorized User */}
                       {isCurrentPending && canApproveRequisition() && (
-                        <div className="mt-3.5 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-col gap-2.5">
+                        <div className="mt-3 pt-2.5 border-t border-amber-200 flex flex-col gap-2">
                           <input
                             type="text"
                             placeholder={t('أضف ملاحظة أو توجيه للاعتماد (اختياري)...', 'Add approval comment/notes (optional)...')}
                             value={approvalComments}
                             onChange={(e) => setApprovalComments(e.target.value)}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-amber-300/80 dark:border-amber-600/60 bg-surface dark:bg-surface-soft text-xs text-neutral-main dark:text-white placeholder:text-neutral-muted/60 dark:placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                            className="form-input text-xs"
                           />
                           <div className="flex items-center justify-end gap-2">
                             <Button
@@ -699,7 +695,7 @@ export const RequisitionsView: React.FC = () => {
           {jobTemplates.map((tmpl) => (
             <div
               key={tmpl.id}
-              className="p-4 rounded-xl border border-surface-border bg-sand-50/50 dark:bg-surface-muted hover:bg-surface hover:border-mint-400 hover:shadow-card transition-all"
+              className="p-4 rounded-xl border border-surface-border bg-sand-50/50 hover:bg-white hover:border-mint-400 hover:shadow-card transition-all"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>

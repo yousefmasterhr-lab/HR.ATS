@@ -87,17 +87,15 @@ export const AutomationsView: React.FC = () => {
       <div className="surface-card border-surface-border">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-mint-500 text-white flex items-center justify-center shadow-card shadow-mint-500/25 shrink-0">
-              <Zap className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-pine text-canvas flex items-center justify-center shadow-card">
+              <Zap className="w-6 h-6 text-mint-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-pine">
-                  {t('الوحدة 8: محرك الأتمتة والقواعد الذكية', 'Unit 8: Automation Engine')}
+                  {t('الوحدة 6: محرك الأتمتة وقواعد العمل (Automation Engine)', 'Unit 6: Workflow Automation Engine')}
                 </h1>
-                <Badge variant="mint" size="sm">
-                  {t('مشغلات فورية وقواعد', 'Triggers & Actions')}
-                </Badge>
+                <Badge variant="mint" size="sm">Trigger → Condition → Action</Badge>
               </div>
               <p className="text-xs text-neutral-muted mt-1">
                 {t(
@@ -163,16 +161,16 @@ export const AutomationsView: React.FC = () => {
               </p>
 
               {/* Workflow Pipeline Logic Pill */}
-              <div className="p-2.5 bg-sand-50/80 dark:bg-surface-muted rounded-xl border border-surface-border flex items-center justify-between text-xs font-semibold">
-                <span className="text-pine dark:text-white bg-surface dark:bg-surface-soft px-2 py-0.5 rounded border border-surface-border">
+              <div className="p-2.5 bg-sand-50 rounded-xl border border-sand-200 flex items-center justify-between text-xs font-semibold">
+                <span className="text-pine bg-white px-2 py-0.5 rounded border border-sand-200">
                   ⚡ {rule.trigger}
                 </span>
                 <ArrowRight className="w-3.5 h-3.5 text-neutral-muted" />
-                <span className="text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-700/50">
+                <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                   🔍 IF condition
                 </span>
                 <ArrowRight className="w-3.5 h-3.5 text-neutral-muted" />
-                <span className="text-mint-700 dark:text-mint-300 bg-mint-100 dark:bg-mint-950/50 px-2 py-0.5 rounded border border-mint-200 dark:border-mint-700/50">
+                <span className="text-mint-800 bg-mint-100 px-2 py-0.5 rounded border border-mint-200">
                   🚀 {rule.actions[0]?.type}
                 </span>
               </div>

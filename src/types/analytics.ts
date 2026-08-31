@@ -15,6 +15,7 @@ export interface SourceMetric {
   spendAmount: number;
   costPerHire: number;
   qualityScore: number; // 1-100
+  conversionPercent: number;
 }
 
 export interface RecruiterMetric {
@@ -29,12 +30,65 @@ export interface RecruiterMetric {
 }
 
 export interface RecruitmentKPIs {
-  timeToHireDays: number; // e.g. 21 days
+  timeToHireDays: number;
   timeToFillDays: number;
-  costPerHire: number; // e.g. 8,500 EGP
+  costPerHire: number;
   totalOpenRequisitions: number;
   activeCandidatesInPipeline: number;
   totalHiresThisQuarter: number;
-  offerAcceptanceRate: number; // e.g. 88%
-  candidateSatisfactionScore: number; // e.g. 4.8 / 5
+  offerAcceptanceRate: number;
+  candidateSatisfactionScore: number;
+  timeToHireChange: number; // vs previous period
+  costPerHireSavings: number; // percentage
+  offersSignedCount: number;
+  offersSentTotal: number;
+}
+
+export interface DepartmentFulfillmentMetric {
+  department: string;
+  departmentEn: string;
+  openPositions: number;
+  targetHires: number;
+  filledHires: number;
+  fulfillmentRate: number; // percentage
+  avgTimeToHire: number;
+  color: string;
+}
+
+export interface MonthlyHiringTrend {
+  month: string;
+  monthEn: string;
+  hiresCount: number;
+  applicationsCount: number;
+  avgTimeToHireDays: number;
+  costPerHire: number;
+}
+
+export interface QualityBracketMetric {
+  bracket: string;
+  bracketEn: string;
+  count: number;
+  percentage: number;
+  color: string;
+  description: string;
+  descriptionEn: string;
+}
+
+export interface ExperienceDiversityMetric {
+  level: string;
+  levelEn: string;
+  count: number;
+  percentage: number;
+  color: string;
+}
+
+export interface PeriodAnalyticsData {
+  kpis: RecruitmentKPIs;
+  funnel: FunnelStageMetric[];
+  sources: SourceMetric[];
+  recruiters: RecruiterMetric[];
+  departments: DepartmentFulfillmentMetric[];
+  monthlyTrends: MonthlyHiringTrend[];
+  qualityBrackets: QualityBracketMetric[];
+  experienceDiversity: ExperienceDiversityMetric[];
 }
