@@ -11,7 +11,8 @@ import {
   Sparkles,
   Info,
   Sun,
-  Moon
+  Moon,
+  Menu
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
@@ -22,9 +23,10 @@ import { Badge } from '../common/Badge';
 interface HeaderProps {
   activeModule: string;
   onOpenRBACMatrix: () => void;
+  onToggleMobileMenu?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ activeModule, onOpenRBACMatrix }) => {
+export const Header: React.FC<HeaderProps> = ({ activeModule, onOpenRBACMatrix, onToggleMobileMenu }) => {
   const { currentUser, currentRole, switchRole, roleDefinitions } = useAuth();
   const { language, toggleLanguage, theme, toggleTheme, t } = useThemeLanguage();
 
@@ -61,42 +63,57 @@ export const Header: React.FC<HeaderProps> = ({ activeModule, onOpenRBACMatrix }
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-sidebar border-b border-sidebar-border px-6 py-3 transition-colors">
-      <div className="flex items-center justify-between gap-4">
-        {/* Left Side: Search & Module Context */}
-        <div className="flex items-center gap-4 flex-1 max-w-xl">
-          <div className="relative w-full">
+    <header className="sticky top-0 z-30 bg-sidebar border-b border-sidebar-border px-3 sm:px-6 py-2.5 sm:py-3 transition-colors">
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
+        {/* Left Side: Mobile Menu Hamburger & Global Search */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0 max-w-xl">
+          {onToggleMobileMenu && (
+            <button
+              onClick={onToggleMobileMenu}
+              className="p-2 rounded-xl bg-surface border border-sand-300 hover:bg-sand-100 text-pine md:hidden shrink-0 shadow-xs"
+              title={t('فتح القائمة الرئيسية', 'Open Navigation Menu')}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          )}
+
+          <div className="relative w-full min-w-0">
             <Search className="w-4 h-4 absolute top-1/2 -translate-y-1/2 start-3.5 text-neutral-muted" />
             <input
               type="text"
               placeholder={t(
-                'بحث شامل في المرشحين، الوظائف، بطاقات التقييم، والمهارات...',
-                'Global search candidates, jobs, scorecards, and skills...'
+                'بحث شامل...',
+                'Global search candidates, jobs...'
               )}
-              className="w-full bg-surface/80 border border-sand-300 rounded-xl ps-10 pe-4 py-2 text-xs md:text-sm text-neutral-main placeholder:text-neutral-subtle focus:bg-surface focus:border-mint-500 focus:outline-none focus:ring-2 focus:ring-mint-500/20 transition-all"
+              className="w-full bg-surface/80 border border-sand-300 rounded-xl ps-9 pe-3 py-1.5 sm:ps-10 sm:pe-4 sm:py-2 text-xs md:text-sm text-neutral-main placeholder:text-neutral-subtle focus:bg-surface focus:border-mint-500 focus:outline-none focus:ring-2 focus:ring-mint-500/20 transition-all truncate"
             />
           </div>
         </div>
 
         {/* Right Side: Role Switcher, Language Toggle, Notifications, User */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Interactive Role Switcher Banner */}
           <div className="relative">
             <button
               onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface border border-sand-300 hover:border-mint-500 shadow-sm transition-all text-xs"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface border border-sand-300 hover:border-mint-500 shadow-sm transition-all text-xs"
               title={t('بدّل دور المستخدم لتجربة الصلاحيات وحجب الرواتب فوراً', 'Switch role to test live RBAC & salary masking')}
             >
-              <div className="w-2 h-2 rounded-full bg-mint-500 animate-pulse" />
-              <div className="flex flex-col text-start">
+              <div className="w-2 h-2 rounded-full bg-mint-500 animate-pulse shrink-0" />
+              <div className="hidden sm:flex flex-col text-start">
                 <span className="text-[10px] text-neutral-muted leading-tight font-medium">
                   {t('الدور الفعّال (RBAC)', 'Active Role')}
                 </span>
-                <span className="font-bold text-pine text-xs flex items-center gap-1">
+                <span className="font-bold text-pine text-xs flex items-center gap-1 truncate max-w-[120px]">
                   {t(roleDefinitions[currentRole]?.name || '', roleDefinitions[currentRole]?.nameEn || '')}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-neutral-muted ms-1" />
+              <div className="sm:hidden flex items-center">
+                <span className="font-bold text-pine text-[11px] truncate max-w-[70px]">
+                  {t(roleDefinitions[currentRole]?.name || '', roleDefinitions[currentRole]?.nameEn || '')}
+                </span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-neutral-muted ms-0.5 sm:ms-1 shrink-0" />
             </button>
 
             {/* Role Dropdown */}

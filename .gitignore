@@ -1,13 +1,44 @@
-node_modules
-dist
-dist-ssr
+# Logs and dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
 *.local
+
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Version 1 and Backup archives (strictly excluded from Git)
+v1/
+v1/
+v.1/
+v.1/
+v1.zip
+v.1.zip
+*.zip
+*.tar.gz
+*.rar
+src_backup_stable/
+*.bak
+*.tmp
+
+# Local scratch scripts and documents
+install.cjs
+test_reg.cjs
+read_docx.ps1
+docx_content.txt
+*.docx

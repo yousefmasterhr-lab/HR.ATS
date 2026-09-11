@@ -32,6 +32,9 @@ export const RequisitionsView: React.FC = () => {
     requisitions, 
     jobTemplates, 
     createRequisition, 
+    updateRequisitionHeadcount,
+    archiveRequisition,
+    reopenRequisition,
     approveRequisitionTier, 
     rejectRequisitionTier, 
     publishRequisition 
@@ -66,7 +69,19 @@ export const RequisitionsView: React.FC = () => {
   const filteredRequisitions = requisitions.filter((r) => {
     if (statusFilter === 'all') return true;
     if (statusFilter === 'pending') {
-      return r.status === 'pending_hr' || r.status === 'pending_finance' || r.status === 'pending_executive';
+      return r.status.startsWith('pending');
+    }
+    if (statusFilter === 'published') {
+      return r.status === 'published' || r.status === 'approved';
+    }
+    if (statusFilter === 'completed') {
+      return r.status === 'completed';
+    }
+    if (statusFilter === 'archived') {
+      return r.status === 'archived';
+    }
+    if (statusFilter === 'rejected') {
+      return r.status === 'rejected';
     }
     return r.status === statusFilter;
   });
@@ -155,9 +170,18 @@ export const RequisitionsView: React.FC = () => {
   const getStatusBadge = (status: JobRequisition['status']) => {
     switch (status) {
       case 'published':
-        return <Badge variant="active">{t('شاغر نشط للنشر', 'Published')}</Badge>;
+        return <Badge variant="active">{t('شاغر نشط للنشر', 'Published Active')}</Badge>;
       case 'approved':
-        return <Badge variant="active">{t('معتمد بالكامل', 'Approved')}</Badge>;
+        return <Badge variant="active">{t('معتمد ومتاح للتقديم', 'Approved Active')}</Badge>;
+      case 'completed':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-xs">
+            <Check className="w-3 h-3 text-emerald-500" />
+            {t('مكتمل التعيين ✓', 'Filled & Completed')}
+          </span>
+        );
+      case 'archived':
+        return <Badge variant="neutral">{t('مؤرشف', 'Archived')}</Badge>;
       case 'pending_hr':
         return <Badge variant="pending">{t('بانتظار اعتماد الموارد البشرية', 'Pending HR')}</Badge>;
       case 'pending_finance':
@@ -219,28 +243,38 @@ export const RequisitionsView: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5 pt-4 border-t border-surface-border">
+        {/* Quick Stats Grid with Rejected Requisitions Metric */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-5 pt-4 border-t border-surface-border">
           <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up stagger-1">
             <span className="text-[11px] text-neutral-muted font-bold block">{t('إجمالي الشواغر المفتوحة', 'Total Requisitions')}</span>
-            <span className="text-xl font-black text-pine mt-1 block">{requisitions.length} <span className="text-xs font-normal text-neutral-muted">{t('طلب', 'Reqs')}</span></span>
+            <span className="text-xl font-black text-pine dark:text-white mt-1 block">{requisitions.length} <span className="text-xs font-normal text-neutral-muted">{t('طلب', 'Reqs')}</span></span>
           </div>
+
           <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-amber-400 card-interactive animate-fade-in-up stagger-2">
             <span className="text-[11px] text-neutral-muted font-bold block">{t('طلبات بانتظار الاعتماد', 'Pending Approvals')}</span>
             <span className="text-xl font-black text-amber-600 dark:text-amber-400 mt-1 block">
               {requisitions.filter((r) => r.status.startsWith('pending')).length} <span className="text-xs font-normal text-neutral-muted">{t('طلبات', 'Pending')}</span>
             </span>
           </div>
+
           <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up stagger-3">
             <span className="text-[11px] text-neutral-muted font-bold block">{t('شواغر نشطة منشورة', 'Published Active')}</span>
             <span className="text-xl font-black text-mint-600 dark:text-mint-400 mt-1 block">
-              {requisitions.filter((r) => r.status === 'published').length} <span className="text-xs font-normal text-neutral-muted">{t('شاغر', 'Active')}</span>
+              {requisitions.filter((r) => r.status === 'published' || r.status === 'approved').length} <span className="text-xs font-normal text-neutral-muted">{t('شاغر', 'Active')}</span>
             </span>
           </div>
-          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-mint-400 card-interactive animate-fade-in-up stagger-4">
-            <span className="text-[11px] text-neutral-muted font-bold block">{t('إجمالي الكوادر المستهدفة', 'Target Headcounts')}</span>
-            <span className="text-xl font-black text-pine mt-1 block">
-              {requisitions.reduce((acc, r) => acc + r.headcount, 0)} <span className="text-xs font-normal text-neutral-muted">{t('موظف', 'Staff')}</span>
+
+          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-emerald-400 card-interactive animate-fade-in-up stagger-4">
+            <span className="text-[11px] text-neutral-muted font-bold block">{t('شواغر مكتملة التعيين', 'Filled & Completed')}</span>
+            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
+              {requisitions.filter((r) => r.status === 'completed').length} <span className="text-xs font-normal text-neutral-muted">{t('مكتمل', 'Filled')}</span>
+            </span>
+          </div>
+
+          <div className="bg-sand-50/80 dark:bg-surface-muted p-3.5 rounded-xl border border-surface-border hover:border-rose-400 card-interactive animate-fade-in-up stagger-5">
+            <span className="text-[11px] text-neutral-muted font-bold block">{t('إجمالي الطلبات المرفوضة', 'Rejected Requests')}</span>
+            <span className="text-xl font-black text-rose-600 dark:text-rose-400 mt-1 block">
+              {requisitions.filter((r) => r.status === 'rejected').length} <span className="text-xs font-normal text-neutral-muted">{t('مرفوض', 'Rejected')}</span>
             </span>
           </div>
         </div>
@@ -248,24 +282,26 @@ export const RequisitionsView: React.FC = () => {
 
       {/* Filter Tabs & Table */}
       <div className="surface-card p-0 overflow-hidden border border-surface-border animate-fade-in-up stagger-3">
-        <div className="p-4 bg-sand-50/80 border-b border-surface-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+        <div className="p-4 bg-sand-50/80 dark:bg-surface-soft border-b border-surface-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <Filter className="w-4 h-4 text-mint-600" />
-            <span className="text-xs font-bold text-pine">{t('تصفية الطلبات:', 'Filter Requisitions:')}</span>
-            <div className="flex items-center gap-1">
+            <span className="text-xs font-bold text-pine dark:text-white">{t('تصفية الطلبات:', 'Filter Requisitions:')}</span>
+            <div className="flex items-center gap-1 flex-wrap">
               {[
                 { key: 'all', label: 'الكل', labelEn: 'All' },
                 { key: 'pending', label: 'بانتظار الاعتماد', labelEn: 'Pending Approval' },
                 { key: 'published', label: 'النشطة والمنشورة', labelEn: 'Published' },
+                { key: 'completed', label: 'مكتملة التعيين', labelEn: 'Filled' },
                 { key: 'rejected', label: 'المرفوضة', labelEn: 'Rejected' },
+                { key: 'archived', label: 'المؤرشفة', labelEn: 'Archived' },
               ].map((f) => (
                 <button
                   key={f.key}
                   onClick={() => setStatusFilter(f.key)}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
                     statusFilter === f.key
-                      ? 'bg-mint-500 text-canvas shadow-sm scale-105'
-                      : 'text-neutral-muted hover:text-pine hover:bg-sand-200/50'
+                      ? 'bg-mint-500 text-white shadow-sm scale-105'
+                      : 'text-neutral-muted hover:text-pine dark:hover:text-white hover:bg-sand-200/50 dark:hover:bg-surface-muted'
                   }`}
                 >
                   {t(f.label, f.labelEn)}
@@ -313,8 +349,36 @@ export const RequisitionsView: React.FC = () => {
                     </td>
 
                     <td className="p-3.5">
-                      <span className="font-bold text-pine block">{req.headcount} {t('مقعد', 'Seats')}</span>
-                      <span className="text-[11px] text-neutral-muted">
+                      <div className="flex items-center justify-between gap-1 mb-1">
+                        <span className="font-bold text-pine dark:text-white block text-xs">
+                          {req.headcount} {t('مقاعد مستهدفة', 'Target Seats')}
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            req.filledCount >= req.headcount
+                              ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                              : req.filledCount > 0
+                              ? 'bg-mint-500/20 text-mint-600 dark:text-mint-400'
+                              : 'bg-sand-200 dark:bg-surface-muted text-neutral-muted'
+                          }`}
+                        >
+                          {req.filledCount}/{req.headcount} {t('معينين', 'Hired')}
+                        </span>
+                      </div>
+
+                      {/* Headcount Fill Progress Bar */}
+                      <div className="w-full bg-sand-200 dark:bg-surface-soft h-1.5 rounded-full overflow-hidden mb-1">
+                        <div
+                          className={`h-full transition-all duration-500 rounded-full ${
+                            req.filledCount >= req.headcount ? 'bg-emerald-500' : 'bg-mint-500'
+                          }`}
+                          style={{
+                            width: `${Math.min(100, Math.round((req.filledCount / req.headcount) * 100))}%`,
+                          }}
+                        />
+                      </div>
+
+                      <span className="text-[10px] text-neutral-muted dark:text-neutral-subtle block">
                         {req.reason === 'expansion'
                           ? t('توسع ونمو', 'Expansion')
                           : req.reason === 'replacement'
@@ -545,6 +609,97 @@ export const RequisitionsView: React.FC = () => {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Headcount & Lifecycle Control Section */}
+              <div className="p-4 rounded-xl bg-sand-50/90 dark:bg-surface-soft border border-surface-border space-y-3">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <h4 className="text-xs font-bold text-pine dark:text-white flex items-center gap-1.5">
+                      <Users className="w-4 h-4 text-mint-500" />
+                      {t('إدارة المقاعد وتتبع شغل الشاغر (Headcount Lifecycle):', 'Headcount & Vacancy Lifecycle:')}
+                    </h4>
+                    <p className="text-[11px] text-neutral-muted dark:text-neutral-300 mt-0.5">
+                      {t(
+                        `المعينين الفعليين: ${selectedReq.filledCount} من أصل ${selectedReq.headcount} مقعد مطلوب (${Math.round((selectedReq.filledCount / selectedReq.headcount) * 100)}%)`,
+                        `Hired: ${selectedReq.filledCount} of ${selectedReq.headcount} target seats (${Math.round((selectedReq.filledCount / selectedReq.headcount) * 100)}%)`
+                      )}
+                    </p>
+                  </div>
+
+                  {selectedReq.filledCount >= selectedReq.headcount ? (
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                      {t('اكتمل التعيين بالكامل ✓', '100% Filled ✓')}
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-mint-500/20 text-mint-700 dark:text-mint-300 border border-mint-500/30">
+                      {t(`متبقي ${selectedReq.headcount - selectedReq.filledCount} مقاعد`, `${selectedReq.headcount - selectedReq.filledCount} Slots Left`)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Headcount Progress Bar */}
+                <div className="w-full bg-sand-200 dark:bg-surface-muted h-2 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-500 rounded-full ${
+                      selectedReq.filledCount >= selectedReq.headcount ? 'bg-emerald-500' : 'bg-mint-500'
+                    }`}
+                    style={{ width: `${Math.min(100, Math.round((selectedReq.filledCount / selectedReq.headcount) * 100))}%` }}
+                  />
+                </div>
+
+                {/* Headcount Lifecycle Actions */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-surface-border">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        updateRequisitionHeadcount(selectedReq.id, selectedReq.headcount + 1);
+                        setSelectedReq((prev) => (prev ? { ...prev, headcount: prev.headcount + 1, status: 'approved' } : null));
+                      }}
+                    >
+                      {t('+ فتح مقعد إضافي (توسيع الاحتياج)', '+ Add 1 More Slot')}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        updateRequisitionHeadcount(selectedReq.id, selectedReq.headcount + 2);
+                        setSelectedReq((prev) => (prev ? { ...prev, headcount: prev.headcount + 2, status: 'approved' } : null));
+                      }}
+                    >
+                      {t('+ فتح مقعدين', '+ Add 2 Slots')}
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {selectedReq.status === 'completed' && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          reopenRequisition(selectedReq.id);
+                          setSelectedReq((prev) => (prev ? { ...prev, status: 'approved', headcount: prev.headcount + 1 } : null));
+                        }}
+                      >
+                        {t('إعادة تنشيط وفتح التقديم', 'Reopen & Reactivate')}
+                      </Button>
+                    )}
+                    {selectedReq.status !== 'archived' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          archiveRequisition(selectedReq.id);
+                          setSelectedReq((prev) => (prev ? { ...prev, status: 'archived' } : null));
+                        }}
+                      >
+                        {t('أرشفة الشاغر', 'Archive')}
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -5,6 +5,8 @@ export type RequisitionStatus =
   | 'pending_executive'
   | 'approved'
   | 'published'
+  | 'completed'
+  | 'archived'
   | 'rejected'
   | 'closed';
 

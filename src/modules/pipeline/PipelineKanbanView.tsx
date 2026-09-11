@@ -181,10 +181,73 @@ export const PipelineKanbanView: React.FC = () => {
             </select>
           </div>
         </div>
+
+        {/* Dynamic Headcount & Hiring Fill Progress Indicator for Selected Job */}
+        {(() => {
+          const selectedReq = jobFilter !== 'all' ? requisitions.find((r) => r.id === jobFilter) : null;
+          if (!selectedReq) return null;
+
+          const isFilled = selectedReq.status === 'completed' || selectedReq.filledCount >= selectedReq.headcount;
+          const remaining = Math.max(0, selectedReq.headcount - selectedReq.filledCount);
+          const percent = Math.min(100, Math.round((selectedReq.filledCount / selectedReq.headcount) * 100));
+
+          return (
+            <div className="mt-4 pt-3.5 border-t border-surface-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs ${
+                    isFilled
+                      ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/25'
+                      : 'bg-mint-500 text-white shadow-sm shadow-mint-500/25'
+                  }`}
+                >
+                  {selectedReq.filledCount}/{selectedReq.headcount}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-pine dark:text-white text-xs">
+                      {t(selectedReq.title, selectedReq.titleEn)}
+                    </span>
+                    {isFilled ? (
+                      <Badge variant="active" size="sm">
+                        {t('مكتمل التعيين بالكامل ✓', '100% Filled ✓')}
+                      </Badge>
+                    ) : (
+                      <Badge variant="mint" size="sm">
+                        {t(`متبقي ${remaining} شواغر للتعيين`, `${remaining} Openings Left`)}
+                      </Badge>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-neutral-muted block mt-0.5">
+                    {t(
+                      `تم تعيين ${selectedReq.filledCount} من إجمالي ${selectedReq.headcount} مقاعد معتمدة لهذا الشاغر`,
+                      `Hired ${selectedReq.filledCount} of ${selectedReq.headcount} target headcount`
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              <div className="w-full sm:w-56 space-y-1">
+                <div className="flex items-center justify-between text-[10px] text-neutral-muted font-bold">
+                  <span>{t('نسبة إشغال الشاغر', 'Hiring Target')}</span>
+                  <span className="font-mono text-pine dark:text-white">{percent}%</span>
+                </div>
+                <div className="w-full bg-sand-200 dark:bg-surface-muted h-2 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-500 rounded-full ${
+                      isFilled ? 'bg-emerald-500' : 'bg-mint-500'
+                    }`}
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* KANBAN BOARD CONTAINER */}
-      <div className="flex gap-4 overflow-x-auto pb-4 pt-1 items-start min-h-[650px]">
+      <div className="flex gap-4 overflow-x-auto pb-4 pt-1 items-start w-full">
         {DEFAULT_STAGES.filter((s) => s.id !== 'rejected').map((stage) => {
           const stageCandidates = filteredCandidates.filter((c) => c.stage === stage.id);
           const isOverThisStage = dragOverStage === stage.id;
@@ -195,14 +258,14 @@ export const PipelineKanbanView: React.FC = () => {
               onDragOver={(e) => handleDragOver(e, stage.id)}
               onDragLeave={(e) => handleDragLeave(e, stage.id)}
               onDrop={(e) => handleDrop(e, stage.id)}
-              className={`w-80 shrink-0 bg-sidebar/80 dark:bg-surface/50 rounded-2xl border transition-all duration-200 flex flex-col max-h-[calc(100vh-250px)] shadow-xs ${
+              className={`w-80 shrink-0 bg-sidebar/80 dark:bg-surface/50 rounded-2xl border transition-all duration-200 flex flex-col max-h-[calc(100vh-270px)] overflow-hidden shadow-xs ${
                 isOverThisStage
                   ? 'ring-2 ring-mint-500 border-mint-500 bg-mint-50/20 dark:bg-mint-950/40 scale-[1.015] shadow-lg shadow-mint-500/15'
                   : 'border-sidebar-border hover:border-mint-400/50'
               }`}
             >
               {/* Column Header */}
-              <div className="p-3.5 border-b border-sidebar-border bg-surface/80 dark:bg-surface-muted/60 rounded-t-2xl flex items-center justify-between">
+              <div className="p-3.5 border-b border-sidebar-border bg-surface/80 dark:bg-surface-muted/60 rounded-t-2xl flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   <span
                     className="w-2.5 h-2.5 rounded-full shadow-xs"
@@ -216,7 +279,7 @@ export const PipelineKanbanView: React.FC = () => {
               </div>
 
               {/* Cards List */}
-              <div className="p-3 space-y-3 overflow-y-auto flex-1">
+              <div className="p-3 space-y-3 overflow-y-auto flex-1 kanban-scroll overscroll-contain">
                 {/* Active Drop Placeholder Indicator */}
                 {isOverThisStage && (
                   <div className="p-3 border-2 border-dashed border-mint-500 bg-mint-500/15 rounded-xl flex items-center justify-center gap-2 text-mint-700 dark:text-mint-300 font-bold text-xs animate-pulse">
@@ -304,7 +367,7 @@ export const PipelineKanbanView: React.FC = () => {
                 })}
 
                 {stageCandidates.length === 0 && !isOverThisStage && (
-                  <div className="py-8 text-center text-xs text-neutral-subtle border-2 border-dashed border-surface-border rounded-xl">
+                  <div className="py-5 text-center text-xs text-neutral-subtle border-2 border-dashed border-surface-border rounded-xl">
                     {t('اسحب المرشحين إلى هنا', 'Drop candidates here')}
                   </div>
                 )}

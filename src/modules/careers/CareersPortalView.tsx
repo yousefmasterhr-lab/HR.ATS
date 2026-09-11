@@ -48,9 +48,12 @@ export const CareersPortalView: React.FC = () => {
   const [candNoticeDays, setCandNoticeDays] = useState(30);
   const [isApplyingSuccess, setIsApplyingSuccess] = useState(false);
 
-  const activePublishedJobs = requisitions.filter((r) => r.status === 'published' || r.status === 'approved');
+  const activePublishedJobs = requisitions.filter(
+    (r) => r.status === 'published' || r.status === 'approved' || r.status === 'completed'
+  );
 
-  const generatedUrl = `https://careers.enterprise-ats.com/jobs/${utmJobId}?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}${referralName ? `&ref=${encodeURIComponent(referralName)}` : ''}`;
+  const baseUrl = typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : '';
+  const generatedUrl = `${baseUrl}?portal=careers&jobId=${utmJobId}&utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}${referralName ? `&ref=${encodeURIComponent(referralName)}` : ''}`;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -217,21 +220,33 @@ export const CareersPortalView: React.FC = () => {
         </div>
 
         {/* Generated URL Result Box */}
-        <div className="mt-4 p-3 bg-sand-50 rounded-xl border border-sand-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 overflow-hidden w-full font-mono text-neutral-main truncate">
+        <div className="mt-4 p-3 bg-sand-50 dark:bg-surface-soft rounded-xl border border-sand-300 dark:border-surface-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 overflow-hidden w-full font-mono text-neutral-main dark:text-neutral-200 truncate">
             <LinkIcon className="w-4 h-4 text-mint-600 shrink-0" />
             <span className="truncate">{generatedUrl}</span>
           </div>
 
-          <Button
-            variant="primary"
-            size="sm"
-            icon={copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            onClick={() => copyToClipboard(generatedUrl)}
-            className="shrink-0"
-          >
-            {copiedLink ? t('تم النسخ بنجاح!', 'Copied!') : t('نسخ الرابط للنشر', 'Copy Link')}
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href={generatedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-surface dark:bg-surface-muted text-pine dark:text-white border border-surface-border hover:border-mint-500 hover:text-mint-600 dark:hover:text-mint-400 transition-all shadow-xs"
+              title={t('فتح الرابط في نافذة جديدة كما يراه المتقدمون', 'Open link in new tab')}
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-mint-500" />
+              {t('تجربة الرابط ↗', 'Test Link ↗')}
+            </a>
+
+            <Button
+              variant="primary"
+              size="sm"
+              icon={copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              onClick={() => copyToClipboard(generatedUrl)}
+            >
+              {copiedLink ? t('تم النسخ بنجاح!', 'Copied!') : t('نسخ الرابط للنشر', 'Copy Link')}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -250,65 +265,109 @@ export const CareersPortalView: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {activePublishedJobs.map((job) => (
-            <div
-              key={job.id}
-              className="surface-card border border-surface-border hover:border-mint-500 transition-all flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-2">
-                  <Badge variant="mint" size="sm">
-                    {t(job.department, job.departmentEn)}
-                  </Badge>
-                  <span className="text-[10px] text-neutral-muted font-mono">{job.code}</span>
-                </div>
+          {activePublishedJobs.map((job) => {
+            const isFilled = job.status === 'completed' || job.filledCount >= job.headcount;
+            const remainingSlots = Math.max(0, job.headcount - job.filledCount);
+            const fillPercentage = Math.min(100, Math.round((job.filledCount / job.headcount) * 100));
 
-                <div>
-                  <h4 className="font-bold text-pine text-sm">{t(job.title, job.titleEn)}</h4>
-                  <div className="flex items-center gap-3 text-xs text-neutral-muted mt-1">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-mint-600" />
-                      {t(job.location, job.locationEn)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Briefcase className="w-3.5 h-3.5 text-mint-600" />
-                      {job.employmentType}
-                    </span>
+            return (
+              <div
+                key={job.id}
+                className={`surface-card border transition-all flex flex-col justify-between ${
+                  isFilled
+                    ? 'border-emerald-500/40 bg-emerald-950/10'
+                    : 'border-surface-border hover:border-mint-500'
+                }`}
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <Badge variant={isFilled ? 'active' : 'mint'} size="sm">
+                      {isFilled ? t('مكتمل التعيين ✓', 'Position Filled ✓') : t(job.department, job.departmentEn)}
+                    </Badge>
+                    <span className="text-[10px] text-neutral-muted font-mono">{job.code}</span>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-pine dark:text-white text-sm">{t(job.title, job.titleEn)}</h4>
+                    <div className="flex items-center gap-3 text-xs text-neutral-muted mt-1">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-mint-600" />
+                        {t(job.location, job.locationEn)}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Briefcase className="w-3.5 h-3.5 text-mint-600" />
+                        {job.employmentType}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Vacancy Headcount Capacity Indicator */}
+                  <div className="p-2.5 rounded-xl bg-sand-50/80 dark:bg-surface-soft border border-surface-border space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-bold">
+                      <span className={isFilled ? 'text-emerald-600 dark:text-emerald-400' : 'text-mint-700 dark:text-mint-300'}>
+                        {isFilled
+                          ? t('تم استيفاء كامل المقاعد المطلوبة ✓', 'All target seats filled ✓')
+                          : t(`متبقي ${remainingSlots} من أصل ${job.headcount} مقاعد`, `${remainingSlots} of ${job.headcount} slots left`)}
+                      </span>
+                      <span className="text-neutral-muted font-mono text-[10px]">{job.filledCount}/{job.headcount}</span>
+                    </div>
+                    <div className="w-full bg-sand-200 dark:bg-surface-muted h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-500 rounded-full ${
+                          isFilled ? 'bg-emerald-500' : 'bg-mint-500'
+                        }`}
+                        style={{ width: `${fillPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-neutral-main dark:text-neutral-200 line-clamp-3 leading-relaxed">
+                    {t(job.description, job.descriptionEn)}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {job.skills.slice(0, 4).map((sk, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] bg-sand-100 dark:bg-surface-soft text-pine dark:text-white px-2 py-0.5 rounded border border-surface-border"
+                      >
+                        {sk}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                <p className="text-xs text-neutral-main line-clamp-3 leading-relaxed">
-                  {t(job.description, job.descriptionEn)}
-                </p>
+                <div className="pt-4 mt-4 border-t border-surface-border flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-neutral-muted block">{t('الراتب التقديري:', 'Budget:')}</span>
+                    <SalaryShield minAmount={job.budgetMin} maxAmount={job.budgetMax} currency={job.currency} />
+                  </div>
 
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {job.skills.slice(0, 4).map((sk, idx) => (
-                    <span key={idx} className="text-[10px] bg-sand-100 text-pine px-2 py-0.5 rounded border border-sand-200">
-                      {sk}
-                    </span>
-                  ))}
+                  {isFilled ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled
+                      className="opacity-70 cursor-not-allowed bg-sand-200 dark:bg-surface-muted text-neutral-muted"
+                    >
+                      {t('اكتمل التعيين', 'Filled')}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedJob(job);
+                        setIsApplyModalOpen(true);
+                      }}
+                    >
+                      {t('تقديم الآن (Apply)', 'Apply Now')}
+                    </Button>
+                  )}
                 </div>
               </div>
-
-              <div className="pt-4 mt-4 border-t border-surface-border flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-neutral-muted block">{t('الراتب التقديري:', 'Budget:')}</span>
-                  <SalaryShield minAmount={job.budgetMin} maxAmount={job.budgetMax} currency={job.currency} />
-                </div>
-
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedJob(job);
-                    setIsApplyModalOpen(true);
-                  }}
-                >
-                  {t('تقديم الآن (Apply)', 'Apply Now')}
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

@@ -34,6 +34,9 @@ interface ATSDataContextType {
   // Requisition Actions
   createRequisition: (req: Omit<JobRequisition, 'id' | 'code' | 'filledCount' | 'currentTier' | 'createdAt' | 'updatedAt'>) => void;
   updateRequisitionStatus: (reqId: string, status: RequisitionStatus) => void;
+  updateRequisitionHeadcount: (reqId: string, newHeadcount: number) => void;
+  archiveRequisition: (reqId: string) => void;
+  reopenRequisition: (reqId: string) => void;
   approveRequisitionTier: (reqId: string, tier: number, comments?: string) => void;
   rejectRequisitionTier: (reqId: string, tier: number, comments: string) => void;
   publishRequisition: (reqId: string) => void;
@@ -168,6 +171,43 @@ export const ATSDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       totalOpenRequisitions: openReqs,
     }));
   }, [candidates, requisitions]);
+
+  // Headcount Lifecycle Auto-Sync: Automatically sync requisition filledCount and status with candidate pipeline
+  useEffect(() => {
+    setRequisitions((prevReqs) => {
+      let hasChanges = false;
+      const updatedReqs = prevReqs.map((req) => {
+        // Count all hired candidates for this job requisition
+        const currentHiredCount = candidates.filter(
+          (c) => c.jobId === req.id && (c.stage === 'hired' || c.status === 'hired')
+        ).length;
+
+        let newStatus = req.status;
+
+        // If target headcount reached and req is active/published -> Auto mark as completed
+        if (currentHiredCount >= req.headcount && (req.status === 'published' || req.status === 'approved')) {
+          newStatus = 'completed';
+        }
+        // If requisition was completed, but hired count dropped below headcount -> Auto reopen to approved/published
+        else if (currentHiredCount < req.headcount && req.status === 'completed') {
+          newStatus = 'approved';
+        }
+
+        if (req.filledCount !== currentHiredCount || req.status !== newStatus) {
+          hasChanges = true;
+          return {
+            ...req,
+            filledCount: currentHiredCount,
+            status: newStatus,
+            updatedAt: new Date().toISOString().substring(0, 10),
+          };
+        }
+        return req;
+      });
+
+      return hasChanges ? updatedReqs : prevReqs;
+    });
+  }, [candidates]);
 
   const logActivity = (
     action: string,
@@ -356,6 +396,66 @@ export const ATSDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setRequisitions((prev) =>
       prev.map((r) => (r.id === reqId ? { ...r, status, updatedAt: new Date().toISOString().substring(0, 10) } : r))
     );
+  };
+
+  const updateRequisitionHeadcount = (reqId: string, newHeadcount: number) => {
+    setRequisitions((prev) =>
+      prev.map((r) => {
+        if (r.id === reqId) {
+          const currentHired = candidates.filter(
+            (c) => c.jobId === reqId && (c.stage === 'hired' || c.status === 'hired')
+          ).length;
+          const isStillFilled = currentHired >= newHeadcount;
+          const newStatus: RequisitionStatus = isStillFilled
+            ? 'completed'
+            : r.status === 'completed' || r.status === 'archived'
+            ? 'approved'
+            : r.status;
+
+          return {
+            ...r,
+            headcount: newHeadcount,
+            filledCount: currentHired,
+            status: newStatus,
+            updatedAt: new Date().toISOString().substring(0, 10),
+          };
+        }
+        return r;
+      })
+    );
+
+    logActivity('تحديث المقاعد المستهدفة للشاغر', 'Updated Requisition Target Headcount', 'requisition', reqId);
+  };
+
+  const archiveRequisition = (reqId: string) => {
+    setRequisitions((prev) =>
+      prev.map((r) =>
+        r.id === reqId ? { ...r, status: 'archived' as const, updatedAt: new Date().toISOString().substring(0, 10) } : r
+      )
+    );
+    logActivity('أرشفة طلب الاحتياج', 'Archived Requisition', 'requisition', reqId);
+  };
+
+  const reopenRequisition = (reqId: string) => {
+    setRequisitions((prev) =>
+      prev.map((r) => {
+        if (r.id === reqId) {
+          const currentHired = candidates.filter(
+            (c) => c.jobId === reqId && (c.stage === 'hired' || c.status === 'hired')
+          ).length;
+          const newHeadcount = currentHired >= r.headcount ? currentHired + 1 : r.headcount;
+          return {
+            ...r,
+            headcount: newHeadcount,
+            filledCount: currentHired,
+            status: 'approved' as const,
+            updatedAt: new Date().toISOString().substring(0, 10),
+          };
+        }
+        return r;
+      })
+    );
+    logActivity('إعادة تنشيط طلب الاحتياج', 'Reopened Requisition', 'requisition', reqId);
   };
 
   const approveRequisitionTier = (reqId: string, tier: number, comments?: string) => {
@@ -671,6 +771,9 @@ export const ATSDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addCandidateNote,
         createRequisition,
         updateRequisitionStatus,
+        updateRequisitionHeadcount,
+        archiveRequisition,
+        reopenRequisition,
         approveRequisitionTier,
         rejectRequisitionTier,
         publishRequisition,

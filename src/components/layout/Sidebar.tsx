@@ -15,7 +15,8 @@ import {
   Sun,
   Moon,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  X
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useATSData } from '../../context/ATSDataContext';
@@ -37,6 +38,8 @@ interface SidebarProps {
   setActiveModule: (module: NavigationModule) => void;
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
+  isMobileOpen?: boolean;
+  setIsMobileOpen?: (open: boolean) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -44,6 +47,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveModule,
   isCollapsed,
   setIsCollapsed,
+  isMobileOpen = false,
+  setIsMobileOpen,
 }) => {
   const { t, direction, theme, toggleTheme } = useThemeLanguage();
   const { candidates, requisitions, interviews, offers } = useATSData();
@@ -146,11 +151,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside
-      className={`relative bg-sidebar border-e border-sidebar-border h-screen sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-40 select-none ${
-        isCollapsed ? 'w-20' : 'w-72'
-      }`}
-    >
+    <>
+      {/* Desktop Sidebar (Persistent & Collapsible on md+ screens) */}
+      <aside
+        className={`hidden md:flex relative bg-sidebar border-e border-sidebar-border h-screen sticky top-0 flex-col transition-all duration-300 ease-in-out z-40 select-none ${
+          isCollapsed ? 'w-20' : 'w-72'
+        }`}
+      >
       {/* Edge Toggle Pill (Always reachable and visible on the border line) */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -317,5 +324,116 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
     </aside>
-  );
+
+    {/* Mobile Slide-in Drawer Navigation (< md screens) */}
+    {isMobileOpen && (
+      <div className="fixed inset-0 z-50 md:hidden animate-fade-in">
+        {/* Backdrop Overlay */}
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+          onClick={() => setIsMobileOpen?.(false)}
+        />
+
+        {/* Drawer Panel */}
+        <aside 
+          className="fixed inset-y-0 start-0 z-50 w-72 max-w-[85vw] bg-sidebar border-e border-sidebar-border shadow-2xl flex flex-col animate-slide-in"
+          dir={direction}
+        >
+          {/* Drawer Header */}
+          <div className="px-4 py-4 border-b border-sidebar-border flex items-center justify-between">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-10 h-10 rounded-2xl bg-mint-500 flex items-center justify-center text-canvas shadow-card shadow-mint-500/20 shrink-0">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col text-start truncate">
+                <span className="font-black text-pine text-base leading-tight tracking-tight truncate">
+                  DYNAMIC ATS
+                </span>
+                <span className="text-[10px] text-neutral-muted font-medium truncate">
+                  {t('منظومة استقطاب المواهب الذكية', 'Smart Recruitment Platform')}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsMobileOpen?.(false)}
+              className="p-1.5 rounded-xl text-neutral-muted hover:text-pine hover:bg-sand-200/60 transition-colors"
+              title={t('إغلاق القائمة', 'Close Menu')}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Navigation List */}
+          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+            {navigationItems.map((item) => {
+              const isActive = activeModule === item.id;
+              const isAllowed = hasPermission(item.permission);
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveModule(item.id);
+                    setIsMobileOpen?.(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl font-medium text-sm transition-all duration-200 text-start ${
+                    isActive
+                      ? 'bg-mint-500 text-canvas font-bold shadow-md shadow-mint-500/25 ring-1 ring-mint-400/50'
+                      : isAllowed
+                      ? 'text-neutral-main hover:bg-sidebar-hover hover:text-pine'
+                      : 'text-neutral-subtle opacity-60 hover:bg-sand-100/40'
+                  }`}
+                >
+                  <div className={`shrink-0 ${isActive ? 'text-canvas' : 'text-pine'}`}>
+                    {item.icon}
+                  </div>
+
+                  <div className="flex items-center justify-between w-full text-start truncate">
+                    <span className="truncate">{t(item.title, item.titleEn)}</span>
+                    {item.badge !== null && (
+                      <span
+                        className={`text-[11px] px-2 py-0.5 rounded-full font-bold border shrink-0 ms-2 ${
+                          isActive
+                            ? 'bg-white/25 text-canvas border-white/40'
+                            : item.badgeColor || 'bg-sand-200 text-pine border-sand-300'
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Drawer Footer Details */}
+          <div className="p-3 border-t border-sidebar-border bg-sand-50/40 space-y-2">
+            <button
+              onClick={toggleTheme}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-sand-100/70 hover:bg-sand-200/80 border border-sand-200/80 text-xs font-semibold text-pine transition-all"
+            >
+              <span className="flex items-center gap-2">
+                {theme === 'dark' ? <Moon className="w-4 h-4 text-mint-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
+                <span>{theme === 'dark' ? t('الوضع الليلي (مفعّل)', 'Dark Mode (On)') : t('الوضع النهاري (مفعّل)', 'Light Mode (On)')}</span>
+              </span>
+              <span className="text-[10px] bg-surface px-2 py-0.5 rounded-md border border-surface-border text-neutral-muted">
+                {t('تبديل', 'Toggle')}
+              </span>
+            </button>
+
+            <div className="flex items-center justify-between text-[11px] text-neutral-muted px-1">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {t('النظام متصل ونشط', 'System Live & Synced')}
+              </span>
+              <span className="font-mono font-semibold text-pine">v2.4 Web App</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    )}
+  </>
+);
 };

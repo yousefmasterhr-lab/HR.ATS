@@ -11,7 +11,8 @@ import {
   Check, 
   Clock, 
   Briefcase,
-  Layers
+  Layers,
+  Award
 } from 'lucide-react';
 import { useATSData } from '../../context/ATSDataContext';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
@@ -241,6 +242,147 @@ export const TalentPoolView: React.FC = () => {
               </div>
             </form>
           )}
+        </Modal>
+      )}
+
+      {/* CANDIDATE DETAILS MODAL */}
+      {selectedCandidate && (
+        <Modal
+          isOpen={Boolean(selectedCandidate)}
+          onClose={() => setSelectedCandidate(null)}
+          title={t(selectedCandidate.name, selectedCandidate.nameEn)}
+          subtitle={`${selectedCandidate.currentTitle} • ${selectedCandidate.currentCompany || t('بنك المواهب المعتمد', 'Talent Pool')}`}
+          maxWidth="4xl"
+        >
+          <div className="space-y-4 text-xs">
+            {/* Top Candidate Header Bar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-sand-50/80 dark:bg-surface-soft border border-surface-border">
+              <div className="flex items-center gap-3.5">
+                <Avatar
+                  name={selectedCandidate.name}
+                  src={selectedCandidate.avatar}
+                  size="lg"
+                />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-pine dark:text-white">
+                      {t(selectedCandidate.name, selectedCandidate.nameEn)}
+                    </h3>
+                    <span className="text-xs font-black bg-mint-500 text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                      {selectedCandidate.matchScore}% {t('مطابقة', 'Match')}
+                    </span>
+                  </div>
+                  <span className="text-xs text-neutral-muted dark:text-neutral-300 block mt-0.5">
+                    {selectedCandidate.email} • {selectedCandidate.phone} • {selectedCandidate.location}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  icon={<Send className="w-3.5 h-3.5" />}
+                  onClick={() => {
+                    fireConfetti();
+                    alert(t('تم إرسال دعوة مباشرة وتواصل مع المرشح بنجاح!', 'Direct invitation sent to candidate successfully!'));
+                  }}
+                >
+                  {t('إرسال دعوة مباشرة (Direct Outreach)', 'Direct Outreach')}
+                </Button>
+              </div>
+            </div>
+
+            {/* Quick Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-surface dark:bg-surface-soft p-3.5 rounded-xl border border-surface-border">
+              <div>
+                <span className="text-neutral-muted block text-[11px] font-medium">{t('سنوات الخبرة:', 'Experience:')}</span>
+                <span className="font-bold text-pine dark:text-white mt-0.5 block">{selectedCandidate.experienceYears} {t('سنوات', 'Years')}</span>
+              </div>
+              <div>
+                <span className="text-neutral-muted block text-[11px] font-medium">{t('الراتب المتوقع (RBAC):', 'Expected Salary:')}</span>
+                <SalaryShield amount={selectedCandidate.expectedSalary} currency={selectedCandidate.currency} />
+              </div>
+              <div>
+                <span className="text-neutral-muted block text-[11px] font-medium">{t('فترة الإشعار (Notice):', 'Notice Period:')}</span>
+                <span className="font-bold text-pine dark:text-white mt-0.5 block">{selectedCandidate.noticePeriodDays} {t('يوم', 'Days')}</span>
+              </div>
+              <div>
+                <span className="text-neutral-muted block text-[11px] font-medium">{t('مصدر الإحالة / القناة:', 'Source Channel:')}</span>
+                <span className="font-bold text-mint-600 dark:text-mint-400 mt-0.5 block">{selectedCandidate.source}</span>
+              </div>
+            </div>
+
+            {/* Professional Summary */}
+            <div>
+              <h4 className="font-bold text-pine dark:text-white mb-1.5 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-mint-500" />
+                {t('النبذة المهنية وخلاصة السيرة الذاتية:', 'Professional Summary:')}
+              </h4>
+              <p className="p-3.5 bg-sand-50/80 dark:bg-surface-muted rounded-xl border border-surface-border leading-relaxed text-neutral-main dark:text-neutral-200">
+                {selectedCandidate.parsedResume.summary || t('سيرة ذاتية مفهرسة ومطابقة للشواغر.', 'Indexed resume profile.')}
+              </p>
+            </div>
+
+            {/* Education & Experience Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="p-3.5 bg-sand-50/80 dark:bg-surface-muted rounded-xl border border-surface-border">
+                <span className="text-[11px] font-bold text-pine dark:text-white block mb-1">
+                  🎓 {t('المؤهل العلمي والتعليم:', 'Education:')}
+                </span>
+                <span className="text-xs text-neutral-main dark:text-neutral-200 block">
+                  {selectedCandidate.education || selectedCandidate.parsedResume.education || t('بكالوريوس هندسة / حاسبات', "Bachelor's Degree")}
+                </span>
+              </div>
+
+              <div className="p-3.5 bg-sand-50/80 dark:bg-surface-muted rounded-xl border border-surface-border">
+                <span className="text-[11px] font-bold text-pine dark:text-white block mb-1">
+                  💼 {t('الخبرة الحالية والشركة:', 'Current Role & Company:')}
+                </span>
+                <span className="text-xs text-neutral-main dark:text-neutral-200 block">
+                  {selectedCandidate.currentTitle} • {selectedCandidate.currentCompany}
+                </span>
+              </div>
+            </div>
+
+            {/* Extracted Skills */}
+            <div>
+              <h4 className="font-bold text-pine dark:text-white mb-1.5 flex items-center gap-1.5">
+                <Tag className="w-4 h-4 text-mint-500" />
+                {t('المهارات والكفاءات المفهرسة (AI Extracted Skills):', 'Extracted Skills:')}
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedCandidate.parsedResume.extractedSkills.map((sk, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[11px] bg-sand-100 dark:bg-surface-soft text-pine dark:text-white font-medium px-2.5 py-1 rounded-lg border border-surface-border"
+                  >
+                    {sk}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Certifications and Languages */}
+            {selectedCandidate.parsedResume.certifications && selectedCandidate.parsedResume.certifications.length > 0 && (
+              <div>
+                <h4 className="font-bold text-pine dark:text-white mb-1.5 flex items-center gap-1.5">
+                  <Award className="w-4 h-4 text-mint-500" />
+                  {t('الشهادات والاعتمادات المهنية:', 'Certifications & Badges:')}
+                </h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedCandidate.parsedResume.certifications.map((cert, idx) => (
+                    <span
+                      key={idx}
+                      className="text-[11px] bg-amber-500/10 text-amber-700 dark:text-amber-300 font-medium px-2.5 py-1 rounded-lg border border-amber-500/30"
+                    >
+                      🏆 {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </Modal>
       )}
     </div>
