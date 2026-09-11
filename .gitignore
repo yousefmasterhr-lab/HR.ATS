@@ -40,5 +40,7 @@ src_backup_stable/
 install.cjs
 test_reg.cjs
 read_docx.ps1
+make_icons.ps1
+*.ps1
 docx_content.txt
 *.docx
